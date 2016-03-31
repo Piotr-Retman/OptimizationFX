@@ -24,8 +24,15 @@ public class Logic{
     static List<Long> staticListDeadlineTimes = new ArrayList<>();
 
     static Map<String, Long> mapOrderShortNameToCurrentPiValue = new HashMap<>();
+
+    static Map<String, Long> mapMakeTimeToOrder = new HashMap<>();
+    static Map<String, Long> mapDeadlineToOrder= new HashMap<>();
+
     static Map<String, Long> staticMapOrderShortNameToCurrentPiValue = new HashMap<>();
     static Map<String, Long> mapToChart = new HashMap<>();
+
+
+
 
     boolean flag = true;
     boolean flagAfterFirstSolution = false;
@@ -190,5 +197,26 @@ public class Logic{
 
     public static long getStaticBaseDelay() {
         return staticBaseDelay;
+    }
+
+
+    public static void setStaticBaseDelay(long staticBaseDelay) {
+        Logic.staticBaseDelay = staticBaseDelay;
+    }
+
+    public static Map<String, Long> getMapMakeTimeToOrder() {
+        return mapMakeTimeToOrder;
+    }
+
+    public static void setMapMakeTimeToOrder(Map<String, Long> mapMakeTimeToOrder) {
+        Logic.mapMakeTimeToOrder = mapMakeTimeToOrder;
+    }
+
+    public static Map<String, Long> getMapDeadlineToOrder() {
+        return mapDeadlineToOrder;
+    }
+
+    public static void setMapDeadlineToOrder(Map<String, Long> mapDeadlineToOrder) {
+        Logic.mapDeadlineToOrder = mapDeadlineToOrder;
     }
 }

@@ -89,6 +89,7 @@ public class LogicSolution extends Logic {
             flag = true;
             System.out.println(finalDelay);
         } else {
+            order.clear();
             prepareTheRerun(forwardTheLogic);
         }
     }
@@ -164,7 +165,6 @@ public class LogicSolution extends Logic {
                         baseOrder = baseOrder + " " + order.get(index);
                     });
             baseOrder = "U(" + baseOrder + ")";
-            order.clear();
             flagCreateBaseOrderString = false;
             staticBaseDelay = delay;
             System.out.println(baseOrder);
@@ -174,7 +174,6 @@ public class LogicSolution extends Logic {
                 finalOrder = finalOrder + " " + order.get(i);
             }
             finalOrder = "U(" + finalOrder + ")";
-            order.clear();
             System.out.println(finalOrder);
         }
 
@@ -317,4 +316,5 @@ public class LogicSolution extends Logic {
             //no need to handle this
         }
     }
+
 }
