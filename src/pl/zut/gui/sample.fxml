@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="makeTimeArray" layoutX="13.0" layoutY="171.0" prefHeight="25.0" prefWidth="475.0" />
+      <TextField fx:id="timeOfOrderArray" layoutX="13.0" layoutY="231.0" prefHeight="25.0" prefWidth="475.0" />
+      <Label layoutX="13.0" layoutY="265.0" prefHeight="17.0" prefWidth="121.0" text="Termin Tt[j]" />
+      <Button id="runAlgorithmButton" fx:id="runAlgorithmButton" layoutX="14.0" layoutY="80.0" mnemonicParsing="false" onAction="#handleSubmitButtonAction" prefHeight="40.0" prefWidth="484.0" text="START" textOverrun="CLIP">
+         <font>
+            <Font name="Aharoni Bold" size="20.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Button id="showChartButton" layoutX="269.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="RYSUJ WYKRES" />
+      <CheckBox id="singleCountChoose" fx:id="singleCountsCheckBox" layoutX="325.0" layoutY="689.0" mnemonicParsing="false" onAction="#handleSingleCountsCheckBox" prefHeight="17.0" prefWidth="167.0" selected="true" text="TRYB POJEDYNCZY" />
+      <Button id="test" fx:id="testButtonSetData" layoutX="12.0" layoutY="36.0" lineSpacing="5.0" mnemonicParsing="false" onAction="#handleTestButtonSetTestData" prefHeight="25.0" prefWidth="121.0" text="TEST" />
+      <TableView editable="true" fixedCellSize="1.0" layoutX="513.0" layoutY="13.0" prefHeight="715.0" prefWidth="778.0">
+        <columns>
+          <TableColumn prefWidth="90.0" text="Zlecenie" />
+          <TableColumn prefWidth="373.0" sortable="false" text="Czas Obróbki T0[j]" />
+            <TableColumn prefWidth="379.0" text="Termin Tt[j]" />
+        </columns>
+      </TableView>
+      <Label layoutX="12.0" layoutY="391.0" prefHeight="17.0" prefWidth="141.0" text="Ścieżka do pliku" />
+      <TextField id="pathToFile" disable="true" layoutX="12.0" layoutY="362.0" prefHeight="25.0" prefWidth="475.0" />
+      <Button id="loadData" fx:id="loadData" disable="true" layoutX="148.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="WCZYTAJ DANE" />
+      <CheckBox id="multipleCountsChoose" fx:id="multipleCountsCheckBox" layoutX="14.0" layoutY="689.0" mnemonicParsing="false" onAction="#handleMultipleCountsCheckBox" prefHeight="17.0" prefWidth="183.0" text="TRYB WIELU OBLICZEŃ" />
+      <Label layoutX="12.0" layoutY="200.0" prefHeight="17.0" prefWidth="121.0" text="Czas obróbek T0[]" />
+      <TextField id="sumOfMakeTimes" fx:id="sumOfMakeTimes" layoutX="170.0" layoutY="453.0" prefHeight="29.0" prefWidth="322.0" />
+      <Label layoutX="17.0" layoutY="459.0" text="Suma czasów obróbek So" />
+      <TextField id="solutionFirst" fx:id="solutionFirst" layoutX="170.0" layoutY="498.0" />
+      <TextField id="solutionAfterOptimization" fx:id="solutionAfterOptimization" layoutX="170.0" layoutY="538.0" />
+      <Label layoutX="17.0" layoutY="504.0" text="Rozwiązanie bazowe MT" />
+      <Label layoutX="17.0" layoutY="544.0" text="Rozwiązanie optymalne" />
+      <TextField id="solutionFirstDelay" fx:id="solutionFirstDelay" layoutX="336.0" layoutY="498.0" prefHeight="25.0" prefWidth="155.0" />
+      <TextField id="solutionAfterOptimizationDelay" fx:id="solutionAfterOptimizationDelay" layoutX="336.0" layoutY="538.0" prefHeight="25.0" prefWidth="155.0" />
+      <RadioButton fx:id="mtMethodBtn" layoutX="23.0" layoutY="628.0" mnemonicParsing="false" text="MT">
+         <toggleGroup>
+            <ToggleGroup fx:id="countMethodsGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="mOptMethodBtn" layoutX="93.0" layoutY="628.0" mnemonicParsing="false" selected="true" text="Mopt" toggleGroup="$countMethodsGroup" />
+      <RadioButton fx:id="mZaMethodBtn" layoutX="372.0" layoutY="628.0" mnemonicParsing="false" text="Mza" toggleGroup="$countMethodsGroup" />
+      <Separator layoutX="9.0" layoutY="593.0" prefHeight="3.0" prefWidth="497.0" />
+      <Separator layoutX="8.0" layoutY="422.0" prefHeight="3.0" prefWidth="497.0" />
+      <Separator layoutX="8.0" layoutY="671.0" prefHeight="10.0" prefWidth="497.0" />
+      <RadioButton fx:id="mOMethodBtn" layoutX="436.0" layoutY="628.0" mnemonicParsing="false" text="Mo" toggleGroup="$countMethodsGroup" />
+      <Label layoutX="154.0" layoutY="628.0" prefHeight="17.0" prefWidth="215.0" text="Metody obliczeń">
+         <padding>
+            <Insets left="50.0" />
+         </padding>
+      </Label>
+      <TextField fx:id="supply" layoutX="13.0" layoutY="290.0" prefHeight="25.0" prefWidth="475.0" />
+      <Label layoutX="14.0" layoutY="323.0" prefHeight="17.0" prefWidth="121.0" text="Zapas" />
+      <Separator layoutX="4.0" layoutY="350.0" prefHeight="3.0" prefWidth="497.0" />
+      <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
+      <Separator layoutX="8.0" layoutY="142.0" prefHeight="3.0" prefWidth="497.0" />
+   </children>
+   <effect>
+      <Blend />
+   </effect>
+</Pane>
