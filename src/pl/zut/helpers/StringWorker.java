@@ -11,4 +11,13 @@ public class StringWorker {
         }
         return sb.toString();
     }
+
+    public static String generateRetrieveStringWithDelimitter(String delimitter, Object... values) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Object s : values) {
+            sb.append(s).append(delimitter);
+        }
+        return sb.toString().substring(1,sb.length()-2).replace(" ","");
+    }
 }

@@ -1,0 +1,1 @@
+Application for scheduling production orders. Is written in JavaFX. 

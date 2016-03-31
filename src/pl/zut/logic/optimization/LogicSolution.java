@@ -89,7 +89,6 @@ public class LogicSolution extends Logic {
             flag = true;
             System.out.println(finalDelay);
         } else {
-            order.clear();
             prepareTheRerun(forwardTheLogic);
         }
     }
@@ -115,12 +114,6 @@ public class LogicSolution extends Logic {
             finalDelay = delay;
             System.out.println(delay);
         }
-    }
-
-    private void sortMap(Map<String, Long> mapOrderShortNameToCurrentPiValue) {
-        Set<String> strings = mapOrderShortNameToCurrentPiValue.keySet();
-        List<String> keysAsArrayList = new ArrayList<>(strings);
-        Collections.sort(keysAsArrayList);
     }
 
     /**

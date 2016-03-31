@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static pl.zut.logic.optimization.Logic.*;
 
@@ -56,6 +57,9 @@ public class MyController {
 
     @FXML
     private TextField timeOfOrderArray = new TextField();
+
+    @FXML
+    private TextField supply = new TextField();
 
     @FXML
     private TextField sumOfMakeTimes = new TextField();
@@ -127,7 +131,7 @@ public class MyController {
 
         setMapDeadlineToOrder(mapTimeDeadlineOrder);
         setMapMakeTimeToOrder(mapMakeTimeOrder);
-
+        updateSupplyData(makeTimeArrayAsList,timeOfOrderArrayAsList);
 
         ls.clearStatics();
         ls.setListMakeOrderTimes(makeTimeArrayAsList);
@@ -137,8 +141,24 @@ public class MyController {
         updateTable(ls);
     }
 
+    private void updateSupplyData(List<Long> listMakeTimeOrder, List<Long> listTimeDeadlineOrder) {
+        List<Long> supplyLongs = new ArrayList<>(listMakeTimeOrder.size());
+        IntStream.range(0,listMakeTimeOrder.size()).forEach(value -> {
+            long makeTimeOrdrValue = listMakeTimeOrder.get(value);
+            long timeDeadlineOrdrValue = listTimeDeadlineOrder.get(value);
+            long supplyData = makeTimeOrdrValue - timeDeadlineOrdrValue;
+            long abs = Math.abs(supplyData);
+            supplyLongs.add(abs);
+        });
+
+        String s = StringWorker.generateRetrieveStringWithDelimitter(",", supplyLongs);
+        supply.setText(s);
+    }
+
 
     private void updateTable(LogicSolution ls) {
+        tableData.getItems().clear();
+        tableData.getColumns().clear();
         List<String> order = ls.getOrder();
         Map<String, Long> mapDeadlineToOrder = getMapDeadlineToOrder();
         Map<String, Long> mapMakeTimeToOrder = getMapMakeTimeToOrder();
@@ -189,6 +209,7 @@ public class MyController {
     private void handleTestButtonSetTestData(ActionEvent event) {
         makeTimeArray.setText("10,20,100,50,100");
         timeOfOrderArray.setText("150,30,110,60,10");
+
     }
 
     @FXML
