@@ -3,8 +3,12 @@ package pl.zut.gui;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 public class Main extends Application {
 
@@ -13,7 +17,9 @@ public class Main extends Application {
 //        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setController(new MyController());
+        MyController myController = new MyController();
+
+        fxmlLoader.setController(myController);
         Pane p = fxmlLoader.load(getClass().getResource("/fxml/main.fxml").openStream());
         Scene scene = new Scene(p, 1366, 768);
 

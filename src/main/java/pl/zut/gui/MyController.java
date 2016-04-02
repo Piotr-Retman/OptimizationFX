@@ -4,8 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -13,18 +11,21 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.util.Pair;
 import pl.zut.chart.GanttJavaFX;
 import pl.zut.helpers.StringWorker;
-import pl.zut.logic.optimization.Logic;
 import pl.zut.logic.optimization.LogicHelper;
 import pl.zut.logic.optimization.LogicSolution;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static pl.zut.logic.optimization.Logic.*;
 
@@ -33,6 +34,8 @@ public class MyController {
     List<String> order;
 
     Map<String, Long> mapMakeTimeOrder;
+
+    Stage primaryStage;
 
     @FXML
     private TableView<TableObject> tableData = new TableView<TableObject>();
@@ -89,12 +92,25 @@ public class MyController {
     @FXML
     private TextField solutionAfterOptimization = new TextField();
 
+    @FXML
+    private TextField pathToFile = new TextField();
+
 
     @FXML
     private Button ganttChart = new Button();
 
     @FXML
-    private void handleSubmitButtonAction(ActionEvent event) {
+    private void handleLoadData() throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(primaryStage);
+        pathToFile.setText(file.getAbsolutePath());
+    }
+
+
+    @FXML
+    private void handleSubmitButtonAction(ActionEvent event) throws IOException {
 
         if (singleCountsCheckBox.isSelected()) {
             validateSingleCountPossible();
@@ -174,8 +190,67 @@ public class MyController {
     }
 
 
-    private void validateMultipleCountPossible() {
+    private void validateMultipleCountPossible() throws IOException {
+        boolean hasData = true;
 
+        if (pathToFile.getText().isEmpty()) {
+            generateAlert("Załaduj plik!", Alert.AlertType.ERROR);
+            hasData = false;
+        }
+
+        if (hasData) {
+            validateFileDataAndRunMultipleCounts();
+        }
+    }
+
+    private void validateFileDataAndRunMultipleCounts() throws IOException {
+        Stream<String> lines = Files.lines(Paths.get(pathToFile.getText()));
+        Map<Integer, Pair<String, String>> mapCountNumAndPairTimes = new HashMap<>();
+        final String[] makeOrderTime = {null};
+        final String[] deadlineTimes = {null};
+        final int[] id = {-1};
+        lines.forEach(s -> {
+            validateCurrentStringFromFile(s,makeOrderTime,deadlineTimes,id);
+            updateMap(makeOrderTime,deadlineTimes,id,mapCountNumAndPairTimes);
+        });
+
+        runMultipleAlgorithmSolutions(mapCountNumAndPairTimes);
+    }
+
+    private void runMultipleAlgorithmSolutions(Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
+      // TODO: 2016-04-02 Add 1) make solutions 2) save solutions to new file
+    }
+
+    private void updateMap(String[] makeOrderTime, String[] deadlineTimes, int[] id, Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
+        if (makeOrderTime[0] != null && deadlineTimes[0] != null && id[0] != -1){
+            mapCountNumAndPairTimes.put(id[0],new Pair<>(makeOrderTime[0],deadlineTimes[0]));
+            makeOrderTime[0] = null;
+            deadlineTimes[0] = null;
+            id[0] = -1;
+        }
+    }
+
+    private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id) {
+        if (s.startsWith("a") && validateData(s)) {
+            makeOrderTime[0] = s.replace("a:","");
+        } else if (s.startsWith("b") && validateData(s)) {
+            deadlineTimes[0] = s.replace("b:","");
+        } else {
+            id[0] = Integer.valueOf(s);
+        }
+    }
+
+    private boolean validateData(Object s) {
+        boolean ok = false;
+        if(s instanceof String){
+            try{
+                ((String) s).split(",");
+                ok = true;
+            }catch(Exception ex){
+                //no need to catch this exception
+            }
+        }
+        return ok;
     }
 
     private void validateSingleCountPossible() {

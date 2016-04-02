@@ -26,8 +26,8 @@
       <CheckBox id="singleCountChoose" fx:id="singleCountsCheckBox" layoutX="326.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleSingleCountsCheckBox" prefHeight="17.0" prefWidth="167.0" selected="true" text="TRYB POJEDYNCZY" />
       <Button id="test" fx:id="testButtonSetData" layoutX="12.0" layoutY="36.0" lineSpacing="5.0" mnemonicParsing="false" onAction="#handleTestButtonSetTestData" prefHeight="25.0" prefWidth="121.0" text="TEST" />
       <Label layoutX="12.0" layoutY="391.0" prefHeight="17.0" prefWidth="141.0" text="Ścieżka do pliku" />
-      <TextField id="pathToFile" disable="true" layoutX="12.0" layoutY="362.0" prefHeight="25.0" prefWidth="475.0" />
-      <Button id="loadData" fx:id="loadData" disable="true" layoutX="148.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="WCZYTAJ DANE" />
+      <TextField id="pathToFile" fx:id="pathToFile" disable="true" layoutX="12.0" layoutY="362.0" prefHeight="25.0" prefWidth="475.0" />
+      <Button id="loadData" fx:id="loadData" disable="true" layoutX="148.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleLoadData" prefHeight="25.0" prefWidth="109.0" text="WCZYTAJ DANE" />
       <CheckBox id="multipleCountsChoose" fx:id="multipleCountsCheckBox" layoutX="15.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleMultipleCountsCheckBox" prefHeight="17.0" prefWidth="183.0" text="TRYB WIELU OBLICZEŃ" />
       <Label layoutX="12.0" layoutY="200.0" prefHeight="17.0" prefWidth="121.0" text="Czas obróbek T0[]" />
       <TextField id="sumOfMakeTimes" fx:id="sumOfMakeTimes" layoutX="170.0" layoutY="453.0" prefHeight="29.0" prefWidth="322.0" />
