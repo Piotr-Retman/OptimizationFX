@@ -4,22 +4,35 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import pl.zut.chart.GanttJavaFX;
 import pl.zut.helpers.StringWorker;
 import pl.zut.logic.optimization.Logic;
 import pl.zut.logic.optimization.LogicHelper;
 import pl.zut.logic.optimization.LogicSolution;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static pl.zut.logic.optimization.Logic.*;
 
 public class MyController {
+
+    List<String> order;
+
+    Map<String, Long> mapMakeTimeOrder;
 
     @FXML
     private TableView<TableObject> tableData = new TableView<TableObject>();
@@ -76,6 +89,10 @@ public class MyController {
     @FXML
     private TextField solutionAfterOptimization = new TextField();
 
+
+    @FXML
+    private Button ganttChart = new Button();
+
     @FXML
     private void handleSubmitButtonAction(ActionEvent event) {
 
@@ -85,6 +102,77 @@ public class MyController {
             validateMultipleCountPossible();
         }
     }
+
+
+    @FXML
+    private void handleGanttBtnAction(ActionEvent event) {
+        try {
+
+            Stage stage = new Stage();
+
+            String[] machines = new String[]{"M1"};
+
+            final NumberAxis xAxis = new NumberAxis();
+            final CategoryAxis yAxis = new CategoryAxis();
+
+            final GanttJavaFX<Number, String> chart = new GanttJavaFX<Number, String>(xAxis, yAxis);
+            xAxis.setLabel(solutionAfterOptimization.getText());
+            xAxis.setTickLabelFill(Color.CHOCOLATE);
+            xAxis.setMinorTickCount(4);
+
+
+            yAxis.setLabel("");
+            yAxis.setTickLabelFill(Color.CHOCOLATE);
+            yAxis.setTickLabelGap(10);
+            yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(machines)));
+
+            chart.setTitle("Machine Monitoring");
+            chart.setLegendVisible(true);
+            chart.setBlockHeight(50);
+            String machine;
+
+            machine = machines[0];
+            XYChart.Series series = new XYChart.Series();
+
+            fillDataSeries(series, machine);
+
+            chart.getData().addAll(series);
+
+            chart.getStylesheets().add(getClass().getResource("/css/ganttchart.css").toExternalForm());
+
+            Scene scene = new Scene(chart, 620, 350);
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void fillDataSeries(XYChart.Series series, String machine) {
+        long startPoint = 0;
+        long endPoint = 0;
+        for (int i = order.size() - 1; i >= 0; i--) {
+            String orderName = order.get(i);
+            Long aLong = mapMakeTimeOrder.get(orderName);
+            endPoint = startPoint + aLong;
+            String status = checkStatus(i);
+            series.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
+            System.out.println(startPoint + " - " + endPoint + "-" + aLong);
+            startPoint = endPoint;
+        }
+    }
+
+    private String checkStatus(int index) {
+        String status = "";
+        if ((index % 2) == 0) {
+            status = "status-red";
+        } else {
+            status = "status-green";
+        }
+        System.out.println(status);
+        return status;
+    }
+
 
     private void validateMultipleCountPossible() {
 
@@ -114,7 +202,7 @@ public class MyController {
         int sizeTimeOfOrderArrayAsList = timeOfOrderArrayAsList.size();
         int sizeMakeTimeArrayAsList = makeTimeArrayAsList.size();
 
-        boolean equal = sizeTimeOfOrderArrayAsList == sizeMakeTimeArrayAsList;
+        boolean equal = sizeTimeOfOrderArrayAsList == sizeMakeTimeArrayAsList && sizeMakeTimeArrayAsList != 0;
         if (equal) {
             runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
         } else {
@@ -124,26 +212,28 @@ public class MyController {
         }
     }
 
+
     private void runAlgorithm(LogicSolution ls, List<Long> makeTimeArrayAsList, List<Long> timeOfOrderArrayAsList) {
 
-        Map<String, Long> mapMakeTimeOrder = LogicHelper.createMapOrderAndOrderTime(makeTimeArrayAsList);
+        mapMakeTimeOrder = LogicHelper.createMapOrderAndOrderTime(makeTimeArrayAsList);
         Map<String, Long> mapTimeDeadlineOrder = LogicHelper.createMapOrderAndOrderTime(timeOfOrderArrayAsList);
 
         setMapDeadlineToOrder(mapTimeDeadlineOrder);
         setMapMakeTimeToOrder(mapMakeTimeOrder);
-        updateSupplyData(makeTimeArrayAsList,timeOfOrderArrayAsList);
+        updateSupplyData(makeTimeArrayAsList, timeOfOrderArrayAsList);
 
         ls.clearStatics();
         ls.setListMakeOrderTimes(makeTimeArrayAsList);
         ls.setListDeadLineTimes(timeOfOrderArrayAsList);
         ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList, 0);
+        order = ls.getOrder();
         updateVisualData(ls);
         updateTable(ls);
     }
 
     private void updateSupplyData(List<Long> listMakeTimeOrder, List<Long> listTimeDeadlineOrder) {
         List<Long> supplyLongs = new ArrayList<>(listMakeTimeOrder.size());
-        IntStream.range(0,listMakeTimeOrder.size()).forEach(value -> {
+        IntStream.range(0, listMakeTimeOrder.size()).forEach(value -> {
             long makeTimeOrdrValue = listMakeTimeOrder.get(value);
             long timeDeadlineOrdrValue = listTimeDeadlineOrder.get(value);
             long supplyData = makeTimeOrdrValue - timeDeadlineOrdrValue;

@@ -22,7 +22,7 @@
             <DropShadow />
          </effect>
       </Button>
-      <Button id="showChartButton" layoutX="269.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="RYSUJ WYKRES" />
+      <Button id="showChartButton" fx:id="ganttChart" layoutX="269.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleGanttBtnAction" prefHeight="25.0" prefWidth="109.0" text="RYSUJ WYKRES" />
       <CheckBox id="singleCountChoose" fx:id="singleCountsCheckBox" layoutX="326.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleSingleCountsCheckBox" prefHeight="17.0" prefWidth="167.0" selected="true" text="TRYB POJEDYNCZY" />
       <Button id="test" fx:id="testButtonSetData" layoutX="12.0" layoutY="36.0" lineSpacing="5.0" mnemonicParsing="false" onAction="#handleTestButtonSetTestData" prefHeight="25.0" prefWidth="121.0" text="TEST" />
       <Label layoutX="12.0" layoutY="391.0" prefHeight="17.0" prefWidth="141.0" text="Ścieżka do pliku" />

@@ -10,11 +10,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+//        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setController(new MyController());
-        Pane p = fxmlLoader.load(getClass().getResource("sample.fxml").openStream());
+        Pane p = fxmlLoader.load(getClass().getResource("/fxml/main.fxml").openStream());
         Scene scene = new Scene(p, 1366, 768);
 
 //        primaryStage.setFullScreen(true);
