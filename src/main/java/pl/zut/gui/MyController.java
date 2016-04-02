@@ -41,13 +41,13 @@ public class MyController {
     private TableView<TableObject> tableData = new TableView<TableObject>();
 
     @FXML
-    private TableColumn orderColumn = new TableColumn("Zlecenie");
+    private TableColumn<TableObject, String> orderColumn = new TableColumn<TableObject, String>("Zlecenie");
 
     @FXML
-    private TableColumn makeOrderTimeColumn = new TableColumn("Czas obróbki T0[j]");
+    private TableColumn<TableObject, String> makeOrderTimeColumn = new TableColumn<TableObject, String>("Czas obróbki T0[j]");
 
     @FXML
-    private TableColumn deadlineTimeColumn = new TableColumn("Termin Tt[j]");
+    private TableColumn<TableObject, String> deadlineTimeColumn = new TableColumn<TableObject, String>("Termin Tt[j]");
 
 
     @FXML
@@ -209,45 +209,67 @@ public class MyController {
         final String[] makeOrderTime = {null};
         final String[] deadlineTimes = {null};
         final int[] id = {-1};
+        final int[] lineNum = {1};
         lines.forEach(s -> {
-            validateCurrentStringFromFile(s,makeOrderTime,deadlineTimes,id);
-            updateMap(makeOrderTime,deadlineTimes,id,mapCountNumAndPairTimes);
+            try {
+                validateCurrentStringFromFile(s, makeOrderTime, deadlineTimes, id, lineNum[0]);
+                updateMap(makeOrderTime, deadlineTimes, id, mapCountNumAndPairTimes);
+                lineNum[0] = lineNum[0] + 1;
+            }catch (Exception ex){
+                //no need to do
+                mapCountNumAndPairTimes.clear();
+            }
         });
 
         runMultipleAlgorithmSolutions(mapCountNumAndPairTimes);
     }
 
     private void runMultipleAlgorithmSolutions(Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
-      // TODO: 2016-04-02 Add 1) make solutions 2) save solutions to new file
+        // TODO: 2016-04-02 Add 1) make solutions 2) save solutions to new file
     }
 
     private void updateMap(String[] makeOrderTime, String[] deadlineTimes, int[] id, Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
-        if (makeOrderTime[0] != null && deadlineTimes[0] != null && id[0] != -1){
-            mapCountNumAndPairTimes.put(id[0],new Pair<>(makeOrderTime[0],deadlineTimes[0]));
+        if (makeOrderTime[0] != null && deadlineTimes[0] != null && id[0] != -1) {
+            mapCountNumAndPairTimes.put(id[0], new Pair<>(makeOrderTime[0], deadlineTimes[0]));
             makeOrderTime[0] = null;
             deadlineTimes[0] = null;
             id[0] = -1;
         }
     }
 
-    private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id) {
-        if (s.startsWith("a") && validateData(s)) {
-            makeOrderTime[0] = s.replace("a:","");
-        } else if (s.startsWith("b") && validateData(s)) {
-            deadlineTimes[0] = s.replace("b:","");
+    private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id, int lineNum) throws Exception {
+        if (s.startsWith("a") && Objects.equals(validateData(s), Boolean.TRUE)) {
+            makeOrderTime[0] = s.replace("a:", "");
+        } else if (s.startsWith("b") && Objects.equals(validateData(s), Boolean.TRUE)) {
+            deadlineTimes[0] = s.replace("b:", "");
         } else {
-            id[0] = Integer.valueOf(s);
+            try {
+                id[0] = Integer.valueOf(s);
+            } catch (Exception ex) {
+                generateAlert("Numer zadania w jednej z linii jest zły! Sprawdź to! Linia:" + lineNum, Alert.AlertType.ERROR);
+                throw new Exception("Błąd zabezpieczony!");
+            }
         }
     }
 
-    private boolean validateData(Object s) {
-        boolean ok = false;
-        if(s instanceof String){
-            try{
+
+    private <T> T validateData(T s) throws Exception {
+        T ok = (T) Boolean.FALSE;
+        if (s instanceof Integer) {
+            ok = (T) Boolean.TRUE;
+        } else if (s instanceof String) {
+            try {
                 ((String) s).split(",");
-                ok = true;
-            }catch(Exception ex){
-                //no need to catch this exception
+                // TODO: 2016-04-02  walidacja jesli ',' wtedy ok jesli nie bład!
+                String regex = "\\d*[,]\\d*";
+                if(!((String) s).matches(regex)){
+                    throw new Exception();
+                }else {
+                    ok = (T) Boolean.TRUE;
+                }
+            } catch (Exception ex) {
+                generateAlert("Można używać tylko znaku ',' między wartościami poszczególnych czasów!", Alert.AlertType.ERROR);
+                throw new Exception("Błąd zabezpieczony!");
             }
         }
         return ok;
