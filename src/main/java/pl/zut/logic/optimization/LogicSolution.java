@@ -21,7 +21,7 @@ public class LogicSolution extends Logic {
 
 
     /**
-     * Metoda główna - rozwiązuje główny algorytm
+     * Metoda główna - rozwiązuje główny algorytm (ale nie rozpoczyna go)
      *
      * @param makeOrderTimes - czasy obróbek T0
      * @param deadlineTimes  - terminy wykonania Tt
@@ -253,7 +253,7 @@ public class LogicSolution extends Logic {
      * @param makeOrderTimes - lista czasów obróbek
      * @return zwraca typ long określający wartość sumy czasów obróbek
      */
-    private long countSumOfMakeOrderTimes(List<Long> makeOrderTimes) {
+    public long countSumOfMakeOrderTimes(List<Long> makeOrderTimes) {
         final long sumOfMakeOrderTimes[] = {0L};
 
         makeOrderTimes.stream().forEach(makeOrderTime ->
@@ -305,6 +305,7 @@ public class LogicSolution extends Logic {
             flag = true;
             flagAfterFirstSolution = false;
             flagCreateBaseOrderString = true;
+//            staticBaseDelay = 0;
         } catch (NullPointerException ex) {
             //no need to handle this
         }

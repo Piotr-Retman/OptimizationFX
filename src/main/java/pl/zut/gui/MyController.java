@@ -1,5 +1,6 @@
 package pl.zut.gui;
 
+import com.sun.media.jfxmedia.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +21,7 @@ import pl.zut.logic.optimization.LogicHelper;
 import pl.zut.logic.optimization.LogicSolution;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -98,6 +100,8 @@ public class MyController {
 
     @FXML
     private Button ganttChart = new Button();
+
+    // TODO: 2016-04-09 Implementacja algorytmów EDD,FIFO,LIFO
 
     @FXML
     private void handleLoadData() throws IOException {
@@ -215,7 +219,7 @@ public class MyController {
                 validateCurrentStringFromFile(s, makeOrderTime, deadlineTimes, id, lineNum[0]);
                 updateMap(makeOrderTime, deadlineTimes, id, mapCountNumAndPairTimes);
                 lineNum[0] = lineNum[0] + 1;
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 //no need to do
                 mapCountNumAndPairTimes.clear();
             }
@@ -226,6 +230,72 @@ public class MyController {
 
     private void runMultipleAlgorithmSolutions(Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
         // TODO: 2016-04-02 Add 1) make solutions 2) save solutions to new file
+        Collection<Pair<String, String>> values = mapCountNumAndPairTimes.values();
+        List<SolutionObject> listOfSolutions = new ArrayList<>();
+        for (Pair<String, String> value : values) {
+            LogicSolution logicSolution = new LogicSolution();
+            SolutionObject so = new SolutionObject();
+            logicSolution.clearStatics();
+            String currentMakeTimes = value.getKey();
+            String currentDeadlineTimes = value.getValue();
+            List<Long> currentMakeTimesAsList = logicSolution.prepareListBasedOnString(currentMakeTimes);
+            List<Long> currentDeadlineTimesAsList = logicSolution.prepareListBasedOnString(currentDeadlineTimes);
+            logicSolution.setListMakeOrderTimes(currentMakeTimesAsList);
+            logicSolution.setListDeadLineTimes(currentDeadlineTimesAsList);
+            logicSolution.solveThePoblem(currentMakeTimesAsList, currentDeadlineTimesAsList, logicSolution.countSumOfMakeOrderTimes(currentMakeTimesAsList));
+
+            so.setCurrentMakeTimes(currentMakeTimes);
+            so.setCurrentDeadlineTimes(currentDeadlineTimes);
+            so.setFinalDelay(logicSolution.getFinalDelay());
+            so.setFinalOrder(logicSolution.getFinalOrder());
+            so.setBaseOrder(logicSolution.getBaseOrder());
+            so.setStaticBaseDelay(LogicSolution.getStaticBaseDelay());
+
+            listOfSolutions.add(so);
+        }
+        saveToFile(listOfSolutions);
+    }
+
+    private void saveToFile(List<SolutionObject> listOfSolutions) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.setTitle("Save Resource File");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(primaryStage);
+
+        if (file != null) {
+            createFileAndSave(listOfSolutions, file);
+        }
+    }
+
+    private void createFileAndSave(List<SolutionObject> listOfSolutions, File file) {
+        try {
+            FileWriter fileWriter = null;
+            int i = 1;
+            fileWriter = new FileWriter(file);
+            for (SolutionObject so : listOfSolutions) {
+                String content = StringWorker.generateRetrieveString(
+                        String.valueOf(i),
+                        ".",
+                        " \n ",
+                        "a:",
+                        so.getCurrentMakeTimes(), " \n ",
+                        "b:",
+                        so.getCurrentDeadlineTimes(), " \n ",
+                        "Bazowe: \n ",String.valueOf(so.getStaticBaseDelay()),"[j] \n ",
+                        so.getBaseOrder(), " \n ",
+                        "Zoptymalizowane: \n ",String.valueOf(so.getFinalDelay()), "[j] \n ",
+                        so.getFinalOrder(),
+                        " \n ======= \n");
+                System.out.println(content);
+                fileWriter.write(content);
+                i++;
+            }
+            fileWriter.close();
+        } catch (IOException ex) {
+            Logger.logMsg(Logger.ERROR, ex.getMessage());
+        }
+
     }
 
     private void updateMap(String[] makeOrderTime, String[] deadlineTimes, int[] id, Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
@@ -238,6 +308,7 @@ public class MyController {
     }
 
     private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id, int lineNum) throws Exception {
+        // TODO: 2016-04-09 Obsługa błędów jest niepoprawna!
         if (s.startsWith("a") && Objects.equals(validateData(s), Boolean.TRUE)) {
             makeOrderTime[0] = s.replace("a:", "");
         } else if (s.startsWith("b") && Objects.equals(validateData(s), Boolean.TRUE)) {
@@ -260,11 +331,10 @@ public class MyController {
         } else if (s instanceof String) {
             try {
                 ((String) s).split(",");
-                // TODO: 2016-04-02  walidacja jesli ',' wtedy ok jesli nie bład!
-                String regex = "\\d*[,]\\d*";
-                if(!((String) s).matches(regex)){
+                String regex = ".+\\d*[,]\\d*";
+                if (!((String) s).matches(regex)) {
                     throw new Exception();
-                }else {
+                } else {
                     ok = (T) Boolean.TRUE;
                 }
             } catch (Exception ex) {
