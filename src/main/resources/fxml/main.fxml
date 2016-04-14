@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -9,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="823.0" prefWidth="1366.0" style="-fx-background-color: rgb(225, 228, 203);;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="856.0" prefWidth="1366.0" style="-fx-background-color: rgb(225, 228, 203);;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TextField fx:id="makeTimeArray" layoutX="13.0" layoutY="171.0" prefHeight="25.0" prefWidth="475.0" />
       <TextField fx:id="timeOfOrderArray" layoutX="13.0" layoutY="231.0" prefHeight="25.0" prefWidth="475.0" />
@@ -45,13 +46,17 @@
       <Separator layoutX="4.0" layoutY="350.0" prefHeight="3.0" prefWidth="497.0" />
       <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
       <Separator layoutX="8.0" layoutY="142.0" prefHeight="3.0" prefWidth="497.0" />
-      <TableView fx:id="tableData" layoutX="513.0" layoutY="31.0" prefHeight="726.0" prefWidth="834.0" />
-      <TextField layoutX="178.0" layoutY="578.0" />
-      <TextField layoutX="346.0" layoutY="578.0" prefHeight="25.0" prefWidth="155.0" />
+      <TableView fx:id="tableData" layoutX="513.0" layoutY="31.0" prefHeight="364.0" prefWidth="834.0" />
+      <TextField fx:id="mzaOrder" layoutX="178.0" layoutY="578.0" />
+      <TextField fx:id="mzaDelay" layoutX="346.0" layoutY="578.0" prefHeight="25.0" prefWidth="155.0" />
       <TextField layoutX="346.0" layoutY="618.0" prefHeight="25.0" prefWidth="155.0" />
       <TextField layoutX="178.0" layoutY="618.0" />
       <Label layoutX="17.0" layoutY="582.0" text="Rozwiązanie  Mza" />
       <Label layoutX="15.0" layoutY="622.0" text="Rozwiązanie Mo" />
+      <Text layoutX="668.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DANE DO OBLICZEŃ" />
+      <Text layoutX="1064.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DANE PO OBLICZENIACH I ZAPISIE" />
+      <TextArea fx:id="finalDataAfterLoad" editable="false" layoutX="521.0" layoutY="431.0" prefHeight="335.0" prefWidth="414.0" />
+      <TextArea fx:id="finalDataToSave" editable="false" layoutX="943.0" layoutY="431.0" prefHeight="335.0" prefWidth="404.0" />
    </children>
    <effect>
       <Blend />

@@ -1,6 +1,10 @@
 package pl.zut.logic.optimization;
 
+import pl.zut.helpers.StringWorker;
+
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -9,6 +13,7 @@ import java.util.stream.IntStream;
  */
 public class LogicSolution extends Logic {
 
+    private final static Logger LOGGER = Logger.getLogger(LogicSolution.class.getName());
     /**
      * Metoda tworzy listę na podstawie ciągu znaków podanych w strumieniu danych.
      *
@@ -80,14 +85,14 @@ public class LogicSolution extends Logic {
     }
 
     private void finalisationOfAlgorithm() {
-        System.out.println("finalisationOfAlgorithm");
-
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.info("Rozpoczynam finalizację algorytmu metodą MOpt...");
         orderToChart = new ArrayList<>(order);
         boolean forwardTheLogic = checkIfHaveSmallerValueThanCurrentDelay(delay);
         generateOrderString();
         if (delay >= finalDelay && finalDelay != 0) {
             flag = true;
-            System.out.println(finalDelay);
+            LOGGER.info(String.valueOf(finalDelay));
         } else {
             prepareTheRerun(forwardTheLogic);
         }
@@ -99,6 +104,7 @@ public class LogicSolution extends Logic {
      * @param forwardTheLogic - flaga określająca dalsze czynności w algorytmie
      */
     private void prepareTheRerun(boolean forwardTheLogic) {
+        LOGGER.setLevel(Level.ALL);
         if (forwardTheLogic) {
             flagAfterFirstSolution = true;
             List<Long> restartedBaseCountedPi = new ArrayList<>(staticBasePi);
@@ -112,7 +118,7 @@ public class LogicSolution extends Logic {
         } else {
             flag = true;
             finalDelay = delay;
-            System.out.println(delay);
+            LOGGER.info(String.valueOf(finalDelay));
         }
     }
 
@@ -151,6 +157,7 @@ public class LogicSolution extends Logic {
      * Metoda przygotowuje do wyświetlenia kolejność zleceń jako String
      */
     private void generateOrderString() {
+        LOGGER.setLevel(Level.ALL);
         if (flagCreateBaseOrderString) {
             IntStream.range(0, order.size())
                     .forEach(value -> {
@@ -160,14 +167,14 @@ public class LogicSolution extends Logic {
             baseOrder = "U(" + baseOrder + ")";
             flagCreateBaseOrderString = false;
             staticBaseDelay = delay;
-            System.out.println(baseOrder);
+            LOGGER.info(baseOrder);
         } else {
             finalOrder = "";
             for (int i = order.size() - 1; i >= 0; i--) {
                 finalOrder = finalOrder + " " + order.get(i);
             }
             finalOrder = "U(" + finalOrder + ")";
-            System.out.println(finalOrder);
+            LOGGER.info(finalOrder);
         }
 
     }

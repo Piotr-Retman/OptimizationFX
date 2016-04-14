@@ -21,6 +21,7 @@ public class Main extends Application {
 
         fxmlLoader.setController(myController);
         Pane p = fxmlLoader.load(getClass().getResource("/fxml/main.fxml").openStream());
+
         Scene scene = new Scene(p, 1366, 768);
 
 //        primaryStage.setFullScreen(true);

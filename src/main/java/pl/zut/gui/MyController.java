@@ -12,11 +12,14 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import pl.zut.chart.GanttJavaFX;
 import pl.zut.helpers.StringWorker;
+import pl.zut.logic.optimization.DifferentMethodologies;
 import pl.zut.logic.optimization.LogicHelper;
 import pl.zut.logic.optimization.LogicSolution;
 
@@ -26,13 +29,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.IntStream;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import static pl.zut.logic.optimization.Logic.*;
 
 public class MyController {
-
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(MyController.class.getName());
     List<String> order;
 
     Map<String, Long> mapMakeTimeOrder;
@@ -97,11 +100,21 @@ public class MyController {
     @FXML
     private TextField pathToFile = new TextField();
 
-
     @FXML
     private Button ganttChart = new Button();
 
-    // TODO: 2016-04-09 Implementacja algorytmów EDD,FIFO,LIFO
+    @FXML
+    private TextArea finalDataAfterLoad = new TextArea();
+
+    @FXML
+    private TextArea finalDataToSave = new TextArea();
+
+    @FXML
+    private TextField mzaOrder = new TextField();
+
+    @FXML
+    private TextField mzaDelay = new TextField();
+
 
     @FXML
     private void handleLoadData() throws IOException {
@@ -115,7 +128,8 @@ public class MyController {
 
     @FXML
     private void handleSubmitButtonAction(ActionEvent event) throws IOException {
-
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.info("Rozpoczynam procedurę obliczeń...");
         if (singleCountsCheckBox.isSelected()) {
             validateSingleCountPossible();
         } else if (multipleCountsCheckBox.isSelected()) {
@@ -171,13 +185,14 @@ public class MyController {
     private void fillDataSeries(XYChart.Series series, String machine) {
         long startPoint = 0;
         long endPoint = 0;
+        LOGGER.setLevel(Level.ALL);
         for (int i = order.size() - 1; i >= 0; i--) {
             String orderName = order.get(i);
             Long aLong = mapMakeTimeOrder.get(orderName);
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
             series.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
-            System.out.println(startPoint + " - " + endPoint + "-" + aLong);
+            LOGGER.info("Dane do diagramu Gantta: "+StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
             startPoint = endPoint;
         }
     }
@@ -189,7 +204,7 @@ public class MyController {
         } else {
             status = "status-green";
         }
-        System.out.println(status);
+        LOGGER.fine(status);
         return status;
     }
 
@@ -214,8 +229,11 @@ public class MyController {
         final String[] deadlineTimes = {null};
         final int[] id = {-1};
         final int[] lineNum = {1};
+        final String[] linesAsString = {""};
+
         lines.forEach(s -> {
             try {
+                linesAsString[0] =  linesAsString[0] + s + "\n";
                 validateCurrentStringFromFile(s, makeOrderTime, deadlineTimes, id, lineNum[0]);
                 updateMap(makeOrderTime, deadlineTimes, id, mapCountNumAndPairTimes);
                 lineNum[0] = lineNum[0] + 1;
@@ -224,7 +242,7 @@ public class MyController {
                 mapCountNumAndPairTimes.clear();
             }
         });
-
+        finalDataAfterLoad.setText(linesAsString[0]);
         runMultipleAlgorithmSolutions(mapCountNumAndPairTimes);
     }
 
@@ -273,6 +291,7 @@ public class MyController {
             FileWriter fileWriter = null;
             int i = 1;
             fileWriter = new FileWriter(file);
+            String contentToShowUser = "";
             for (SolutionObject so : listOfSolutions) {
                 String content = StringWorker.generateRetrieveString(
                         String.valueOf(i),
@@ -282,15 +301,17 @@ public class MyController {
                         so.getCurrentMakeTimes(), " \n ",
                         "b:",
                         so.getCurrentDeadlineTimes(), " \n ",
-                        "Bazowe: \n ",String.valueOf(so.getStaticBaseDelay()),"[j] \n ",
+                        "Bazowe: \n ", String.valueOf(so.getStaticBaseDelay()), "[j] \n ",
                         so.getBaseOrder(), " \n ",
-                        "Zoptymalizowane: \n ",String.valueOf(so.getFinalDelay()), "[j] \n ",
+                        "Zoptymalizowane: \n ", String.valueOf(so.getFinalDelay()), "[j] \n ",
                         so.getFinalOrder(),
                         " \n ======= \n");
-                System.out.println(content);
+                contentToShowUser = contentToShowUser + content;
+                LOGGER.info(content);
                 fileWriter.write(content);
                 i++;
             }
+            finalDataToSave.setText(contentToShowUser);
             fileWriter.close();
         } catch (IOException ex) {
             Logger.logMsg(Logger.ERROR, ex.getMessage());
@@ -372,6 +393,7 @@ public class MyController {
         boolean equal = sizeTimeOfOrderArrayAsList == sizeMakeTimeArrayAsList && sizeMakeTimeArrayAsList != 0;
         if (equal) {
             runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
+            runDifferentSolutions();
         } else {
             generateAlert(StringWorker.generateRetrieveString("Nieodpowiednia ilość danych w listach. Lista czasów obróbek: ",
                     String.valueOf(sizeMakeTimeArrayAsList),
@@ -379,11 +401,18 @@ public class MyController {
         }
     }
 
+    private void runDifferentSolutions() {
+        DifferentMethodologies differentMethodologies = new DifferentMethodologies();
+        differentMethodologies.countSupplyIncreaseOrder();
+        mzaOrder.setText(differentMethodologies.getSupplyIncreaseOrder());
+        mzaDelay.setText(String.valueOf(differentMethodologies.getSupplyIncreaseTimeDelay()));
+    }
+
 
     private void runAlgorithm(LogicSolution ls, List<Long> makeTimeArrayAsList, List<Long> timeOfOrderArrayAsList) {
 
-        mapMakeTimeOrder = LogicHelper.createMapOrderAndOrderTime(makeTimeArrayAsList);
-        Map<String, Long> mapTimeDeadlineOrder = LogicHelper.createMapOrderAndOrderTime(timeOfOrderArrayAsList);
+        mapMakeTimeOrder = LogicHelper.createMapOrderAndTime(makeTimeArrayAsList);
+        Map<String, Long> mapTimeDeadlineOrder = LogicHelper.createMapOrderAndTime(timeOfOrderArrayAsList);
 
         setMapDeadlineToOrder(mapTimeDeadlineOrder);
         setMapMakeTimeToOrder(mapMakeTimeOrder);
@@ -399,15 +428,7 @@ public class MyController {
     }
 
     private void updateSupplyData(List<Long> listMakeTimeOrder, List<Long> listTimeDeadlineOrder) {
-        List<Long> supplyLongs = new ArrayList<>(listMakeTimeOrder.size());
-        IntStream.range(0, listMakeTimeOrder.size()).forEach(value -> {
-            long makeTimeOrdrValue = listMakeTimeOrder.get(value);
-            long timeDeadlineOrdrValue = listTimeDeadlineOrder.get(value);
-            long supplyData = makeTimeOrdrValue - timeDeadlineOrdrValue;
-            long abs = Math.abs(supplyData);
-            supplyLongs.add(abs);
-        });
-
+        List<Long> supplyLongs = LogicHelper.createSupplyLongs(listMakeTimeOrder, listTimeDeadlineOrder);
         String s = StringWorker.generateRetrieveStringWithDelimitter(",", supplyLongs);
         supply.setText(s);
     }

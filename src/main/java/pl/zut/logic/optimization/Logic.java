@@ -1,6 +1,7 @@
 package pl.zut.logic.optimization;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by Retman on 2016-02-27.
