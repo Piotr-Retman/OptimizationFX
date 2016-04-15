@@ -16,21 +16,17 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import pl.zut.chart.GanttJavaFX;
-import pl.zut.helpers.StringWorker;
 import pl.zut.logic.optimization.DifferentMethodologies;
-import pl.zut.logic.optimization.LogicHelper;
+import pl.zut.logic.optimization.TypeMap;
+import pl.zut.logic.optimization.helpers.LogicHelper;
 import pl.zut.logic.optimization.LogicSolution;
+import pl.zut.logic.optimization.helpers.StringWorker;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.stream.Stream;
-
-import static pl.zut.logic.optimization.Logic.*;
 
 public class MyController {
     private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(MyController.class.getName());
@@ -133,10 +129,24 @@ public class MyController {
     private void handleSubmitButtonAction(ActionEvent event) throws IOException {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam procedurę obliczeń...");
+        Validator validator = new Validator();
         if (singleCountsCheckBox.isSelected()) {
-            validateSingleCountPossible();
+            LogicSolution ls = new LogicSolution();
+            List<Long> timeOfOrderArrayAsList = StringWorker.prepareListBasedOnString(timeOfOrderArray.getText());
+            List<Long> makeTimeArrayAsList = StringWorker.prepareListBasedOnString(makeTimeArray.getText());
+
+            int sizeTimeOfOrderArrayAsList = timeOfOrderArrayAsList.size();
+            int sizeMakeTimeArrayAsList = makeTimeArrayAsList.size();
+            boolean isOk = validator.validateSingleCountPossible(makeTimeArray.getText(), timeOfOrderArray.getText(),sizeMakeTimeArrayAsList,sizeTimeOfOrderArrayAsList);
+
+            if(isOk){
+                runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
+                runDifferentSolutions(ls);
+            }
         } else if (multipleCountsCheckBox.isSelected()) {
-            validateMultipleCountPossible();
+            String lines = validator.validateMultipleCountsAndReturnFileAsString(pathToFile.getText());
+            finalDataAfterLoad.setText(lines);
+            runMultipleAlgorithmSolutions(validator.getMapCountNumAndPairTimes());
         }
     }
 
@@ -161,7 +171,7 @@ public class MyController {
             yAxis.setLabel("");
             yAxis.setTickLabelFill(Color.CHOCOLATE);
             yAxis.setTickLabelGap(10);
-            yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(machines)));
+            yAxis.setCategories(FXCollections.observableArrayList(Arrays.asList(machines)));
 
             chart.setTitle("Machine Monitoring");
             chart.setLegendVisible(true);
@@ -195,7 +205,7 @@ public class MyController {
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
             series.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
-            LOGGER.info("Dane do diagramu Gantta: "+StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
+            LOGGER.info("Dane do diagramu Gantta: " + StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
             startPoint = endPoint;
         }
     }
@@ -211,46 +221,7 @@ public class MyController {
         return status;
     }
 
-
-    private void validateMultipleCountPossible() throws IOException {
-        boolean hasData = true;
-
-        if (pathToFile.getText().isEmpty()) {
-            generateAlert("Załaduj plik!", Alert.AlertType.ERROR);
-            hasData = false;
-        }
-
-        if (hasData) {
-            validateFileDataAndRunMultipleCounts();
-        }
-    }
-
-    private void validateFileDataAndRunMultipleCounts() throws IOException {
-        Stream<String> lines = Files.lines(Paths.get(pathToFile.getText()));
-        Map<Integer, Pair<String, String>> mapCountNumAndPairTimes = new HashMap<>();
-        final String[] makeOrderTime = {null};
-        final String[] deadlineTimes = {null};
-        final int[] id = {-1};
-        final int[] lineNum = {1};
-        final String[] linesAsString = {""};
-
-        lines.forEach(s -> {
-            try {
-                linesAsString[0] =  linesAsString[0] + s + "\n";
-                validateCurrentStringFromFile(s, makeOrderTime, deadlineTimes, id, lineNum[0]);
-                updateMap(makeOrderTime, deadlineTimes, id, mapCountNumAndPairTimes);
-                lineNum[0] = lineNum[0] + 1;
-            } catch (Exception ex) {
-                //no need to do
-                mapCountNumAndPairTimes.clear();
-            }
-        });
-        finalDataAfterLoad.setText(linesAsString[0]);
-        runMultipleAlgorithmSolutions(mapCountNumAndPairTimes);
-    }
-
     private void runMultipleAlgorithmSolutions(Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
-        // TODO: 2016-04-02 Add 1) make solutions 2) save solutions to new file
         Collection<Pair<String, String>> values = mapCountNumAndPairTimes.values();
         List<SolutionObject> listOfSolutions = new ArrayList<>();
         for (Pair<String, String> value : values) {
@@ -259,18 +230,14 @@ public class MyController {
             logicSolution.clearStatics();
             String currentMakeTimes = value.getKey();
             String currentDeadlineTimes = value.getValue();
-            List<Long> currentMakeTimesAsList = logicSolution.prepareListBasedOnString(currentMakeTimes);
-            List<Long> currentDeadlineTimesAsList = logicSolution.prepareListBasedOnString(currentDeadlineTimes);
-            logicSolution.setListMakeOrderTimes(currentMakeTimesAsList);
-            logicSolution.setListDeadLineTimes(currentDeadlineTimesAsList);
-            logicSolution.solveThePoblem(currentMakeTimesAsList, currentDeadlineTimesAsList, logicSolution.countSumOfMakeOrderTimes(currentMakeTimesAsList));
+            List<Long> currentMakeTimesAsList = StringWorker.prepareListBasedOnString(currentMakeTimes);
+            List<Long> currentDeadlineTimesAsList = StringWorker.prepareListBasedOnString(currentDeadlineTimes);
+            logicSolution.solveThePoblem(currentMakeTimesAsList, currentDeadlineTimesAsList);
 
             so.setCurrentMakeTimes(currentMakeTimes);
             so.setCurrentDeadlineTimes(currentDeadlineTimes);
             so.setFinalDelay(logicSolution.getFinalDelay());
             so.setFinalOrder(logicSolution.getFinalOrder());
-            so.setBaseOrder(logicSolution.getBaseOrder());
-            so.setStaticBaseDelay(LogicSolution.getStaticBaseDelay());
 
             listOfSolutions.add(so);
         }
@@ -322,117 +289,27 @@ public class MyController {
 
     }
 
-    private void updateMap(String[] makeOrderTime, String[] deadlineTimes, int[] id, Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
-        if (makeOrderTime[0] != null && deadlineTimes[0] != null && id[0] != -1) {
-            mapCountNumAndPairTimes.put(id[0], new Pair<>(makeOrderTime[0], deadlineTimes[0]));
-            makeOrderTime[0] = null;
-            deadlineTimes[0] = null;
-            id[0] = -1;
-        }
-    }
-
-    private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id, int lineNum) throws Exception {
-        // TODO: 2016-04-09 Obsługa błędów jest niepoprawna!
-        if (s.startsWith("a") && Objects.equals(validateData(s), Boolean.TRUE)) {
-            makeOrderTime[0] = s.replace("a:", "");
-        } else if (s.startsWith("b") && Objects.equals(validateData(s), Boolean.TRUE)) {
-            deadlineTimes[0] = s.replace("b:", "");
-        } else {
-            try {
-                id[0] = Integer.valueOf(s);
-            } catch (Exception ex) {
-                generateAlert("Numer zadania w jednej z linii jest zły! Sprawdź to! Linia:" + lineNum, Alert.AlertType.ERROR);
-                throw new Exception("Błąd zabezpieczony!");
-            }
-        }
-    }
-
-
-    private <T> T validateData(T s) throws Exception {
-        T ok = (T) Boolean.FALSE;
-        if (s instanceof Integer) {
-            ok = (T) Boolean.TRUE;
-        } else if (s instanceof String) {
-            try {
-                ((String) s).split(",");
-                String regex = ".+\\d*[,]\\d*";
-                if (!((String) s).matches(regex)) {
-                    throw new Exception();
-                } else {
-                    ok = (T) Boolean.TRUE;
-                }
-            } catch (Exception ex) {
-                generateAlert("Można używać tylko znaku ',' między wartościami poszczególnych czasów!", Alert.AlertType.ERROR);
-                throw new Exception("Błąd zabezpieczony!");
-            }
-        }
-        return ok;
-    }
-
-    private void validateSingleCountPossible() {
-        boolean hasData = true;
-
-        if (makeTimeArray.getText().isEmpty()) {
-            hasData = false;
-            generateAlert("Proszę uzupełnić czasy obróbek!", Alert.AlertType.ERROR);
-        } else if (timeOfOrderArray.getText().isEmpty()) {
-            hasData = false;
-            generateAlert("Proszę uzupełnić terminy zleceń", Alert.AlertType.ERROR);
-        }
-
-        if (hasData) {
-            validateInsideDataForSingleCounts();
-        }
-    }
-
-    private void validateInsideDataForSingleCounts() {
-        LogicSolution ls = new LogicSolution();
-        List<Long> timeOfOrderArrayAsList = ls.prepareListBasedOnString(timeOfOrderArray.getText());
-        List<Long> makeTimeArrayAsList = ls.prepareListBasedOnString(makeTimeArray.getText());
-
-        int sizeTimeOfOrderArrayAsList = timeOfOrderArrayAsList.size();
-        int sizeMakeTimeArrayAsList = makeTimeArrayAsList.size();
-
-        boolean equal = sizeTimeOfOrderArrayAsList == sizeMakeTimeArrayAsList && sizeMakeTimeArrayAsList != 0;
-        if (equal) {
-            runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
-            runDifferentSolutions();
-        } else {
-            generateAlert(StringWorker.generateRetrieveString("Nieodpowiednia ilość danych w listach. Lista czasów obróbek: ",
-                    String.valueOf(sizeMakeTimeArrayAsList),
-                    " Lista terminów: ", String.valueOf(sizeTimeOfOrderArrayAsList)), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void runDifferentSolutions() {
+    private void runDifferentSolutions(LogicSolution ls) {
         DifferentMethodologies differentMethodologies = new DifferentMethodologies();
-        differentMethodologies.countSupplyIncreaseOrder();
+        differentMethodologies.countSupplyIncreaseOrder(ls);
         mzaOrder.setText(differentMethodologies.getSupplyIncreaseOrder());
         mzaDelay.setText(String.valueOf(differentMethodologies.getSupplyIncreaseTimeDelay()));
 
-        differentMethodologies.countIncreasingMakeTimesOrder();
+        differentMethodologies.countIncreasingMakeTimesOrder(ls);
         moOrder.setText(differentMethodologies.getIncreaseMakeTimeOrder());
         moDelay.setText(String.valueOf(differentMethodologies.getIncreateMakeTimeDelay()));
 
-        differentMethodologies.countIncreasingDeadLineTimesOrder();
+        differentMethodologies.countIncreasingDeadLineTimesOrder(ls);
         mtOrder.setText(differentMethodologies.getIncreaseDeadLineTimeOrder());
         mtDelay.setText(String.valueOf(differentMethodologies.getIncreaseDeadLineTimeDelay()));
     }
 
 
     private void runAlgorithm(LogicSolution ls, List<Long> makeTimeArrayAsList, List<Long> timeOfOrderArrayAsList) {
-
-        mapMakeTimeOrder = LogicHelper.createMapOrderAndTime(makeTimeArrayAsList);
-        Map<String, Long> mapTimeDeadlineOrder = LogicHelper.createMapOrderAndTime(timeOfOrderArrayAsList);
-
-        setMapDeadlineToOrder(mapTimeDeadlineOrder);
-        setMapMakeTimeToOrder(mapMakeTimeOrder);
+        mapMakeTimeOrder = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeTimeArrayAsList, TypeMap.STRING_ON_LONG);
         updateSupplyData(makeTimeArrayAsList, timeOfOrderArrayAsList);
-
         ls.clearStatics();
-        ls.setListMakeOrderTimes(makeTimeArrayAsList);
-        ls.setListDeadLineTimes(timeOfOrderArrayAsList);
-        ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList, 0);
+        ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList);
         order = ls.getOrder();
         updateVisualData(ls);
         updateTable(ls);
@@ -449,8 +326,8 @@ public class MyController {
         tableData.getItems().clear();
         tableData.getColumns().clear();
         List<String> order = ls.getOrder();
-        Map<String, Long> mapDeadlineToOrder = getMapDeadlineToOrder();
-        Map<String, Long> mapMakeTimeToOrder = getMapMakeTimeToOrder();
+        Map<String, Long> mapDeadlineToOrder = LogicSolution.getStaticMapOrderToDeadline();
+        Map<String, Long> mapMakeTimeToOrder = LogicSolution.getStaticMapOrderToMakeTime();
         List<TableObject> tableObjects = generateTableObjectsList(order, mapMakeTimeToOrder, mapDeadlineToOrder);
 
         ObservableList<TableObject> data = FXCollections.observableArrayList(tableObjects);
@@ -484,11 +361,6 @@ public class MyController {
         sumOfMakeTimes.setText(String.valueOf(LogicSolution.getStaticSumOfMakeOrderTimes()));
         solutionAfterOptimizationDelay.setText(String.valueOf(ls.getFinalDelay()));
         solutionAfterOptimization.setText(ls.getFinalOrder());
-    }
-
-    private void generateAlert(String msg, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType, msg, ButtonType.OK);
-        alert.showAndWait();
     }
 
 

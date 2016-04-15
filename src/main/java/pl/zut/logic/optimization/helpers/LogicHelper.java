@@ -1,4 +1,6 @@
-package pl.zut.logic.optimization;
+package pl.zut.logic.optimization.helpers;
+
+import pl.zut.logic.optimization.TypeMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,13 +23,20 @@ public class LogicHelper {
         return arrayOfValues;
     }
 
-    public static Map<String, Long> createMapOrderAndTime(List<Long> orderTimesToCreateMap) {
+    public static Map<?, ?> createMapOrderAndTime(List<Long> orderTimesToCreateMap, TypeMap typeMap) {
         Map<String, Long> mapOrderTime = new HashMap<>();
+        Map<Long, String> mapTimeOrder = new HashMap<>();
         for (int i = 0; i < orderTimesToCreateMap.size(); i++) {
-            int keyPart = i +1;
-            mapOrderTime.put("z" + keyPart,orderTimesToCreateMap.get(i));
+            int keyPart = i + 1;
+            mapOrderTime.put("z" + keyPart, orderTimesToCreateMap.get(i));
+            mapTimeOrder.put(orderTimesToCreateMap.get(i), "z" + keyPart);
         }
-        return mapOrderTime;
+        if (TypeMap.LONG_ON_STRING.equals(typeMap)) {
+            return mapTimeOrder;
+        } else if (TypeMap.STRING_ON_LONG.equals(typeMap)) {
+            return mapOrderTime;
+        }
+        return null;
     }
 
 

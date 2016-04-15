@@ -1,4 +1,6 @@
-package pl.zut.helpers;
+package pl.zut.logic.optimization.helpers;
+
+import java.util.List;
 
 /**
  * Created by Retman on 2016-03-31.
@@ -19,5 +21,9 @@ public class StringWorker {
             sb.append(s).append(delimitter);
         }
         return sb.toString().substring(1,sb.length()-2).replace(" ","");
+    }
+
+    public static List<Long> prepareListBasedOnString(String listAsString) {
+        return LogicHelper.createListOfValuesBasedOnString(listAsString);
     }
 }

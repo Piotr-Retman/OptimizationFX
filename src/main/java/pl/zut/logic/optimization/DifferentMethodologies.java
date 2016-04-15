@@ -1,5 +1,7 @@
 package pl.zut.logic.optimization;
 
+import pl.zut.logic.optimization.helpers.LogicHelper;
+
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,13 +26,13 @@ public class DifferentMethodologies extends LogicSolution {
 
     private List<String> helperKeys = new ArrayList<>();
 
-    public void countIncreasingDeadLineTimesOrder() {
+    public void countIncreasingDeadLineTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MT...");
-        List<Long> makeOrderTimes = new ArrayList(Logic.staticListMakeOrderTimes);
-        Map<String, Long> mapOrderAndTimeMakeTime = LogicHelper.createMapOrderAndTime(makeOrderTimes);
-        List<Long> deadlineOrderTimes = new ArrayList(Logic.staticListDeadlineTimes);
-        Map<String, Long> mapOrderAndTimeDeadLine = LogicHelper.createMapOrderAndTime(deadlineOrderTimes);
+        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
+        Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
+        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
+        Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(deadlineOrderTimes);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeDeadLine.values());
         List<String> keys = new ArrayList<>(mapOrderAndTimeMakeTime.keySet());
@@ -39,13 +41,13 @@ public class DifferentMethodologies extends LogicSolution {
 
     }
 
-    public void countIncreasingMakeTimesOrder() {
+    public void countIncreasingMakeTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą M0...");
-        List<Long> makeOrderTimes = new ArrayList(Logic.staticListMakeOrderTimes);
-        Map<String, Long> mapOrderAndTimeMakeTime = LogicHelper.createMapOrderAndTime(makeOrderTimes);
-        List<Long> deadlineOrderTimes = new ArrayList(Logic.staticListDeadlineTimes);
-        Map<String, Long> mapOrderAndTimeDeadLine = LogicHelper.createMapOrderAndTime(deadlineOrderTimes);
+        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
+        Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
+        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
+        Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(makeOrderTimes);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeMakeTime.values());
         List<String> keys = new ArrayList<>(mapOrderAndTimeMakeTime.keySet());
@@ -55,15 +57,15 @@ public class DifferentMethodologies extends LogicSolution {
     }
 
 
-    public void countSupplyIncreaseOrder() {
+    public void countSupplyIncreaseOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MZa...");
-        List<Long> makeOrderTimes = new ArrayList(Logic.staticListMakeOrderTimes);
-        List<Long> deadlineOrderTimes = new ArrayList(Logic.staticListDeadlineTimes);
+        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
+        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
         List<Long> supplyLongs = LogicHelper.createSupplyLongs(makeOrderTimes, deadlineOrderTimes);
-        Map<String, Long> mapOrderAndTimeSupplies = LogicHelper.createMapOrderAndTime(supplyLongs);
-        Map<String, Long> mapOrderAndTimeDeadLine = LogicHelper.createMapOrderAndTime(deadlineOrderTimes);
-        Map<String, Long> mapOrderAndTimeMakeTime = LogicHelper.createMapOrderAndTime(makeOrderTimes);
+        Map<String, Long> mapOrderAndTimeSupplies = (Map<String, Long>) LogicHelper.createMapOrderAndTime(supplyLongs,TypeMap.STRING_ON_LONG);
+        Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
+        Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
 
         Collections.sort(supplyLongs);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeSupplies.values());
