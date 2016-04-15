@@ -90,9 +90,11 @@ public class LogicSolution extends Logic {
         orderToChart = new ArrayList<>(order);
         boolean forwardTheLogic = checkIfHaveSmallerValueThanCurrentDelay(delay);
         generateOrderString();
-        if (delay >= finalDelay && finalDelay != 0) {
+        // TODO: 2016-04-14  zmieniono przez dodanie delay >= staticBaseDelay
+        LOGGER.info("Opóźnienie: "+delay + " Końcowe opóźnienie: "+finalDelay + " Bazowe opóźnienie: " + staticBaseDelay);
+        if (delay >= finalDelay && finalDelay != 0 && delay >= staticBaseDelay) {
             flag = true;
-            LOGGER.info(String.valueOf(finalDelay));
+//            LOGGER.info("Finalne opóźnienie: "+ String.valueOf(finalDelay));
         } else {
             prepareTheRerun(forwardTheLogic);
         }

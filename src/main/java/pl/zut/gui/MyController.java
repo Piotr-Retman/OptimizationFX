@@ -12,8 +12,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.web.HTMLEditor;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -86,10 +84,10 @@ public class MyController {
     private TextField sumOfMakeTimes = new TextField();
 
     @FXML
-    private TextField solutionFirst = new TextField();
+    private TextField mtOrder = new TextField();
 
     @FXML
-    private TextField solutionFirstDelay = new TextField();
+    private TextField mtDelay = new TextField();
 
     @FXML
     private TextField solutionAfterOptimizationDelay = new TextField();
@@ -115,6 +113,11 @@ public class MyController {
     @FXML
     private TextField mzaDelay = new TextField();
 
+    @FXML
+    private TextField moOrder = new TextField();
+
+    @FXML
+    private TextField moDelay = new TextField();
 
     @FXML
     private void handleLoadData() throws IOException {
@@ -406,6 +409,14 @@ public class MyController {
         differentMethodologies.countSupplyIncreaseOrder();
         mzaOrder.setText(differentMethodologies.getSupplyIncreaseOrder());
         mzaDelay.setText(String.valueOf(differentMethodologies.getSupplyIncreaseTimeDelay()));
+
+        differentMethodologies.countIncreasingMakeTimesOrder();
+        moOrder.setText(differentMethodologies.getIncreaseMakeTimeOrder());
+        moDelay.setText(String.valueOf(differentMethodologies.getIncreateMakeTimeDelay()));
+
+        differentMethodologies.countIncreasingDeadLineTimesOrder();
+        mtOrder.setText(differentMethodologies.getIncreaseDeadLineTimeOrder());
+        mtDelay.setText(String.valueOf(differentMethodologies.getIncreaseDeadLineTimeDelay()));
     }
 
 
@@ -471,8 +482,6 @@ public class MyController {
 
     private void updateVisualData(LogicSolution ls) {
         sumOfMakeTimes.setText(String.valueOf(LogicSolution.getStaticSumOfMakeOrderTimes()));
-        solutionFirst.setText(ls.getBaseOrder());
-        solutionFirstDelay.setText(String.valueOf(LogicSolution.getStaticBaseDelay()));
         solutionAfterOptimizationDelay.setText(String.valueOf(ls.getFinalDelay()));
         solutionAfterOptimization.setText(ls.getFinalOrder());
     }

@@ -17,25 +17,41 @@ public class DifferentMethodologies extends LogicSolution {
 
     private String supplyIncreaseOrder = "";
     private long supplyIncreaseTimeDelay = 0;
+
+    private String increaseDeadLineTimeOrder = "";
+    private long increaseDeadLineTimeDelay = 0;
+
+
     private List<String> helperKeys = new ArrayList<>();
-//    t0   tt   Za
-//    z1 10   150  140
-//    z2 20   30    10
-//    z3 100  110   10
-//
-//    M0 (rosnące T0)
-//
-//    U(z1 z2 z3)
-//
-//    op = 0 + 0 + 20 = 20
-//
-//    MZa (zapas rosnący)
-//
-//    U(z3 z2 z1)
-//    op = 0 + 90 + 0 = 90
+
+    public void countIncreasingDeadLineTimesOrder() {
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.info("Rozpoczynam obliczanie metodą MT...");
+        List<Long> makeOrderTimes = new ArrayList(Logic.staticListMakeOrderTimes);
+        Map<String, Long> mapOrderAndTimeMakeTime = LogicHelper.createMapOrderAndTime(makeOrderTimes);
+        List<Long> deadlineOrderTimes = new ArrayList(Logic.staticListDeadlineTimes);
+        Map<String, Long> mapOrderAndTimeDeadLine = LogicHelper.createMapOrderAndTime(deadlineOrderTimes);
+        Collections.sort(deadlineOrderTimes);
+        List<Long> mappedValues = new ArrayList(mapOrderAndTimeDeadLine.values());
+        List<String> keys = new ArrayList<>(mapOrderAndTimeMakeTime.keySet());
+        increaseDeadLineTimeOrder = prepareOrderForSupplyIncreaseOrder(mappedValues, keys, deadlineOrderTimes);
+        increaseDeadLineTimeDelay = delayCount(mapOrderAndTimeDeadLine, mapOrderAndTimeMakeTime);
+
+    }
 
     public void countIncreasingMakeTimesOrder() {
+        LOGGER.setLevel(Level.ALL);
+        LOGGER.info("Rozpoczynam obliczanie metodą M0...");
         List<Long> makeOrderTimes = new ArrayList(Logic.staticListMakeOrderTimes);
+        Map<String, Long> mapOrderAndTimeMakeTime = LogicHelper.createMapOrderAndTime(makeOrderTimes);
+        List<Long> deadlineOrderTimes = new ArrayList(Logic.staticListDeadlineTimes);
+        Map<String, Long> mapOrderAndTimeDeadLine = LogicHelper.createMapOrderAndTime(deadlineOrderTimes);
+        Collections.sort(makeOrderTimes);
+        List<Long> mappedValues = new ArrayList(mapOrderAndTimeMakeTime.values());
+        List<String> keys = new ArrayList<>(mapOrderAndTimeMakeTime.keySet());
+        increaseMakeTimeOrder = prepareOrderForSupplyIncreaseOrder(mappedValues, keys, makeOrderTimes);
+        increateMakeTimeDelay = delayCount(mapOrderAndTimeDeadLine, mapOrderAndTimeMakeTime);
+
     }
 
 
@@ -52,13 +68,13 @@ public class DifferentMethodologies extends LogicSolution {
         Collections.sort(supplyLongs);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeSupplies.values());
         List<String> keys = new ArrayList<>(mapOrderAndTimeSupplies.keySet());
-        prepareOrderForSupplyIncreaseOrder(mappedValues, keys, supplyLongs);
+        supplyIncreaseOrder = prepareOrderForSupplyIncreaseOrder(mappedValues, keys, supplyLongs);
 
-        supplyIncreaseTimeDelay = delayCount(mapOrderAndTimeDeadLine,mapOrderAndTimeMakeTime);
+        supplyIncreaseTimeDelay = delayCount(mapOrderAndTimeDeadLine, mapOrderAndTimeMakeTime);
     }
 
     private long delayCount(Map<String, Long> mapOrderAndTimeDeadLine, Map<String, Long> mapOrderAndTimeMakeTime) {
-        final long[] timeLaps = {0,0};
+        final long[] timeLaps = {0, 0};
         IntStream.range(0, helperKeys.size()).forEach(value -> {
             String key = helperKeys.get(value);
             Long deadLineTimeCurrentValue = mapOrderAndTimeDeadLine.get(key);
@@ -74,9 +90,9 @@ public class DifferentMethodologies extends LogicSolution {
     }
 
 
-    private void prepareOrderForSupplyIncreaseOrder(List<Long> mappedValues, List<String> keys, List<Long> supplyLongs) {
+    private String prepareOrderForSupplyIncreaseOrder(List<Long> mappedValues, List<String> keys, List<Long> supplyLongs) {
         final String[] ordr = {""};
-
+        helperKeys.clear();
         supplyLongs.stream().forEach(aLong -> {
             int i = mappedValues.indexOf(aLong);
             String s = keys.get(i);
@@ -85,7 +101,8 @@ public class DifferentMethodologies extends LogicSolution {
             keys.remove(i);
             mappedValues.remove(i);
         });
-        supplyIncreaseOrder = "U( " + ordr[0] + ")";
+        String data = "U( " + ordr[0] + ")";
+        return data;
     }
 
 
@@ -98,5 +115,21 @@ public class DifferentMethodologies extends LogicSolution {
 
     public String getSupplyIncreaseOrder() {
         return supplyIncreaseOrder;
+    }
+
+    public long getIncreateMakeTimeDelay() {
+        return increateMakeTimeDelay;
+    }
+
+    public String getIncreaseMakeTimeOrder() {
+        return increaseMakeTimeOrder;
+    }
+
+    public long getIncreaseDeadLineTimeDelay() {
+        return increaseDeadLineTimeDelay;
+    }
+
+    public String getIncreaseDeadLineTimeOrder() {
+        return increaseDeadLineTimeOrder;
     }
 }
