@@ -195,64 +195,8 @@ public class LogicSolution {
         return finalDelay;
     }
 
-    public void setFinalDelay(long finalDelay) {
-        this.finalDelay = finalDelay;
-    }
-
-    public static long getStaticSumOfMakeOrderTimes() {
-        return staticSumOfMakeOrderTimes;
-    }
-
-    public static void setStaticSumOfMakeOrderTimes(long staticSumOfMakeOrderTimes) {
-        LogicSolution.staticSumOfMakeOrderTimes = staticSumOfMakeOrderTimes;
-    }
-
-    public static List<Long> getStaticListMakeOrderTimes() {
-        return staticListMakeOrderTimes;
-    }
-
-    public static void setStaticListMakeOrderTimes(List<Long> staticListMakeOrderTimes) {
-        LogicSolution.staticListMakeOrderTimes = staticListMakeOrderTimes;
-    }
-
-    public static List<Long> getStaticBasePi() {
-        return staticBasePi;
-    }
-
-    public static void setStaticBasePi(List<Long> staticBasePi) {
-        LogicSolution.staticBasePi = staticBasePi;
-    }
-
-    public static List<Long> getStaticListDeadlineTimes() {
-        return staticListDeadlineTimes;
-    }
-
-    public static void setStaticListDeadlineTimes(List<Long> staticListDeadlineTimes) {
-        LogicSolution.staticListDeadlineTimes = staticListDeadlineTimes;
-    }
-
-    public static Map<String, Long> getStaticMapOrderShortNameToCurrentPiValue() {
-        return staticMapOrderShortNameToCurrentPiValue;
-    }
-
-    public static void setStaticMapOrderShortNameToCurrentPiValue(Map<String, Long> staticMapOrderShortNameToCurrentPiValue) {
-        LogicSolution.staticMapOrderShortNameToCurrentPiValue = staticMapOrderShortNameToCurrentPiValue;
-    }
-
-    public static Set<Long> getStaticLastUsedBasedPiRoads() {
-        return staticLastUsedBasedPiRoads;
-    }
-
-    public static void setStaticLastUsedBasedPiRoads(Set<Long> staticLastUsedBasedPiRoads) {
-        LogicSolution.staticLastUsedBasedPiRoads = staticLastUsedBasedPiRoads;
-    }
-
     public List<String> getOrder() {
         return order;
-    }
-
-    public void setOrder(List<String> order) {
-        this.order = order;
     }
 
     public static Map<String, Long> getStaticMapOrderToDeadline() {
@@ -263,27 +207,7 @@ public class LogicSolution {
         return staticMapOrderToMakeTime;
     }
 
-    public static List<Long> getFinalDeadLineData() {
-        return finalDeadLineData;
-    }
-
-    public static void setFinalDeadLineData(List<Long> finalDeadLineData) {
-        LogicSolution.finalDeadLineData = finalDeadLineData;
-    }
-
-    public static List<Long> getFinalMakeOrderData() {
-        return finalMakeOrderData;
-    }
-
-    public static void setFinalMakeOrderData(List<Long> finalMakeOrderData) {
-        LogicSolution.finalMakeOrderData = finalMakeOrderData;
-    }
-
     public static Long getFinalSumOfMakeOrderData() {
         return finalSumOfMakeOrderData;
-    }
-
-    public static void setFinalSumOfMakeOrderData(Long finalSumOfMakeOrderData) {
-        LogicSolution.finalSumOfMakeOrderData = finalSumOfMakeOrderData;
     }
 }
