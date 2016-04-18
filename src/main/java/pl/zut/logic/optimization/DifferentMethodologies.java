@@ -29,9 +29,9 @@ public class DifferentMethodologies extends LogicSolution {
     public void countIncreasingDeadLineTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MT...");
-        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
+        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
+        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
         Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
-        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(deadlineOrderTimes);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeDeadLine.values());
@@ -44,9 +44,9 @@ public class DifferentMethodologies extends LogicSolution {
     public void countIncreasingMakeTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą M0...");
-        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
+        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
+        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
         Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
-        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(makeOrderTimes);
         List<Long> mappedValues = new ArrayList(mapOrderAndTimeMakeTime.values());
@@ -60,8 +60,8 @@ public class DifferentMethodologies extends LogicSolution {
     public void countSupplyIncreaseOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MZa...");
-        List<Long> makeOrderTimes = new ArrayList(ls.getStaticListMakeOrderTimes());
-        List<Long> deadlineOrderTimes = new ArrayList(ls.getStaticListDeadlineTimes());
+        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
+        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
         List<Long> supplyLongs = LogicHelper.createSupplyLongs(makeOrderTimes, deadlineOrderTimes);
         Map<String, Long> mapOrderAndTimeSupplies = (Map<String, Long>) LogicHelper.createMapOrderAndTime(supplyLongs,TypeMap.STRING_ON_LONG);
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);

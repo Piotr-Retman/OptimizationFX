@@ -1,14 +1,12 @@
 package pl.zut.logic.optimization;
 
-import javafx.util.Pair;
 import pl.zut.logic.optimization.helpers.HelperObject;
 import pl.zut.logic.optimization.helpers.LogicHelper;
+import pl.zut.logic.optimization.helpers.StringWorker;
 
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Created by Retman on 2015-09-21.
@@ -29,53 +27,143 @@ public class LogicSolution {
     static Map<String, Long> staticMapOrderToDeadline = new HashMap<>();
     static Map<String, Long> staticMapOrderToMakeTime = new HashMap<>();
     static List<String> staticOrderNames = new ArrayList<>();
-    static Set<Long> lastUsedBasedPiRoads = new HashSet<>();
+    static Set<Long> staticLastUsedBasedPiRoads = new HashSet<>();
 
-    static Map<Integer,HelperObject> mapSolutionOnHelper = new HashMap<>();
 
+    static List<HelperObject> listOfSolutionObjects = new ArrayList<>();
+    long baseDelay = 0;
+    long currentDelay = 0;
+    List<String> finalOrderOfOrders = new ArrayList<>();
+
+    public static List<Long> finalDeadLineData = new ArrayList<>();
+    public static List<String> finalStaticOrderNames = new ArrayList<>();
+    public static List<Long> finalMakeOrderData = new ArrayList<>();
+    public static Long finalSumOfMakeOrderData = 0L;
+    private boolean flag = true;
+    private int size = 0;
     public void solveThePoblem(List<Long> makeOrderTimes,
                                List<Long> deadlineTimes) {
         SimpleProcedure sp = new SimpleProcedure();
         long sumOfTheMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
         staticSumOfMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
+
         List<Long> countedBasePi = sp.countPi(sumOfTheMakeOrderTimes, deadlineTimes);
-        staticOrderNames = sp.createStaticOrderNames(makeOrderTimes.size());
-        List<String> ordersList = new ArrayList<>(staticOrderNames);
         staticBasePi = new ArrayList<>(countedBasePi);
         staticListMakeOrderTimes = new ArrayList<>(makeOrderTimes);
         staticListDeadlineTimes = new ArrayList<>(deadlineTimes);
-        staticMapOrderToDeadline = (Map<String, Long>) LogicHelper.createMapOrderAndTime(staticListDeadlineTimes, TypeMap.STRING_ON_LONG);
-        staticMapOrderToMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(staticListMakeOrderTimes, TypeMap.STRING_ON_LONG);
-        staticMapDeadlineToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(staticListDeadlineTimes, TypeMap.LONG_ON_STRING);
-        staticMapMakeTimeToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(staticListMakeOrderTimes, TypeMap.LONG_ON_STRING);
-        solveBaseSolution(countedBasePi, 0L, "", makeOrderTimes, deadlineTimes, sumOfTheMakeOrderTimes, ordersList);
-        lastUsedBasedPiRoads.add(sp.findSmallestValue(countedBasePi));
-        solveOptimalSolution();
+        if(flag) {
+            staticOrderNames = sp.createStaticOrderNames(makeOrderTimes.size());
+            finalDeadLineData = new ArrayList<>(staticListDeadlineTimes);
+            finalMakeOrderData = new ArrayList<>(staticListMakeOrderTimes);
+            finalStaticOrderNames = new ArrayList<>(staticOrderNames);
+            finalSumOfMakeOrderData = new Long(staticSumOfMakeOrderTimes);
+            staticMapOrderToDeadline = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.STRING_ON_LONG);
+            staticMapOrderToMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.STRING_ON_LONG);
+            staticMapDeadlineToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.LONG_ON_STRING);
+            staticMapMakeTimeToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.LONG_ON_STRING);
+            size = makeOrderTimes.size() - 1;
+            flag = false;
+        }
+        fullAlgorithmJob(countedBasePi, new Long(staticSumOfMakeOrderTimes));
+
     }
 
-    private void solveOptimalSolution() {
-        // TODO: 2016-04-15 Rozwiązanie algorytmu tutaj powinno się znaleźć
-    }
-
-    private void solveBaseSolution(List<Long> countedBasePi, Long delay, String orderOfBase, List<Long> makeOrderTimes, List<Long> deadlineTimes, long sumOfTheMakeOrderTimes, List<String> orders) {
-        if (sumOfTheMakeOrderTimes != 0) {
+    private void fullAlgorithmJob(List<Long> countedBasePi, Long sumOfTheMakeOrderTimes) {
+        if (countedBasePi.size() != 0) {
             SimpleProcedure sp = new SimpleProcedure();
-            long smallestValue = sp.findSmallestValue(countedBasePi);
-            int index = countedBasePi.indexOf(smallestValue);
-            Long foundMakeTime = makeOrderTimes.get(index);
-            String orderName = orders.get(index);
-            order.add(orderName);
-            delay = sp.updateDelay(smallestValue, delay);
-            orderOfBase = sp.generateOrderString(order);
-            sumOfTheMakeOrderTimes = sp.updateSumOfTheSmallestMakeOfOrderTimes(sumOfTheMakeOrderTimes, foundMakeTime);
-            deadlineTimes.remove(index);
-            makeOrderTimes.remove(index);
-            orders.remove(index);
-            List<Long> newPi = sp.countPi(sumOfTheMakeOrderTimes, deadlineTimes);
-            solveBaseSolution(newPi, delay, orderOfBase, makeOrderTimes, deadlineTimes, sumOfTheMakeOrderTimes, orders);
-        }else{
-            mapSolutionOnHelper.put(1,new HelperObject(TypeSolution.BASE_SOLUTION,new ArrayList<String>(order),orderOfBase,delay));
-            order.clear();
+            for (int i = 0; i < countedBasePi.size(); i++) {
+                System.out.println(i);
+                if (i == 0) {
+                    long smallestValue = sp.findSmallestValue(countedBasePi);
+                    solveSolution(countedBasePi, smallestValue, 0, new ArrayList<>(staticListMakeOrderTimes), new ArrayList<>(staticListDeadlineTimes), sumOfTheMakeOrderTimes, new ArrayList<>(staticOrderNames), currentDelay);
+                    staticLastUsedBasedPiRoads.add(smallestValue);
+                    System.out.println("Bazowe opóźnienie: " + baseDelay);
+                } else {
+                    long smallestValue = sp.findSmallestValueOfPi(countedBasePi, staticLastUsedBasedPiRoads, baseDelay);
+                    if (sp.isHavingSmallerValueThanCurrentDelay(staticLastUsedBasedPiRoads, baseDelay, countedBasePi)) {
+                        solveSolution(countedBasePi, smallestValue, 0, new ArrayList<>(staticListMakeOrderTimes), new ArrayList<>(staticListDeadlineTimes), sumOfTheMakeOrderTimes, new ArrayList<>(staticOrderNames), currentDelay);
+                        staticLastUsedBasedPiRoads.add(smallestValue);
+                    }
+                }
+            }
+            //Dodanie do listy kolejnego zlecenia uszeregowanego
+            HelperObject lastOfCurrentQueueHelperObj = listOfSolutionObjects.get(listOfSolutionObjects.size() - 1);
+            List<String> orderOfCurrentQueueHelperObj = lastOfCurrentQueueHelperObj.getOrder();
+            String orderElemToSave = orderOfCurrentQueueHelperObj.get(0);
+            finalOrderOfOrders.add(orderElemToSave);
+            //Przygotowanie do dalszych obliczeń.
+            if(finalOrderOfOrders.size() - 1 != size) {
+                int indexOfReducing = staticOrderNames.indexOf(orderElemToSave);
+                staticSumOfMakeOrderTimes = staticSumOfMakeOrderTimes - staticListMakeOrderTimes.get(indexOfReducing);
+                staticOrderNames.remove(indexOfReducing);
+                staticListDeadlineTimes.remove(indexOfReducing);
+                staticListMakeOrderTimes.remove(indexOfReducing);
+                staticLastUsedBasedPiRoads.clear();
+                solveThePoblem(new ArrayList<>(staticListMakeOrderTimes), new ArrayList<>(staticListDeadlineTimes));
+            }else{
+                order = new ArrayList<>(finalOrderOfOrders);
+                setFinalOrder(sp.generateOrderString(order));
+                finalizeAlgorithm(order,new ArrayList<>(finalMakeOrderData),new ArrayList<>(finalDeadLineData),new Long(finalSumOfMakeOrderData), new ArrayList<>(finalStaticOrderNames));
+            }
+        } else {
+            System.out.println(baseDelay);
+        }
+    }
+
+    private void finalizeAlgorithm(List<String> order, ArrayList<Long> makeOrderData, ArrayList<Long> deadLineData, Long sumOfMakeOrderTimes, ArrayList<String> orderNames) {
+        SimpleProcedure sp = new SimpleProcedure();
+        long delay = 0;
+        for(String orderName : order){
+            List<Long> countedPi = sp.countPi(sumOfMakeOrderTimes, deadLineData);
+            int index = orderNames.indexOf(orderName);
+            Long aLong = countedPi.get(index);
+            if(aLong < 0){
+                aLong = 0L;
+            }
+            delay+=aLong;
+            sumOfMakeOrderTimes-=makeOrderData.get(index);
+            makeOrderData.remove(index);
+            deadLineData.remove(index);
+            orderNames.remove(index);
+        }
+        finalDelay = delay;
+    }
+
+    private void solveSolution(List<Long> countedBasePi,
+                               Long basePiElem,
+                               long baseDelay,
+                               List<Long> makeOrderTimes,
+                               List<Long> deadlineTimes,
+                               long sumOfTheMakeOrderTimes,
+                               List<String> ordersList,
+                               long currentDelay) {
+        SimpleProcedure sp = new SimpleProcedure();
+        try {
+            if (sumOfTheMakeOrderTimes != 0) {
+                int indexOfEverything = countedBasePi.indexOf(basePiElem);
+                long updatedSumOfMakeTimes = sp.updateSumOfMakeOfOrderTimes(sumOfTheMakeOrderTimes, makeOrderTimes.get(indexOfEverything));
+                long delay = sp.updateDelay(basePiElem, currentDelay);
+                baseDelay += delay;
+                order.add(ordersList.get(indexOfEverything));
+                deadlineTimes.remove(indexOfEverything);
+                makeOrderTimes.remove(indexOfEverything);
+                ordersList.remove(indexOfEverything);
+                List<Long> newPi = sp.countPi(updatedSumOfMakeTimes, deadlineTimes);
+                long smallestValue = sp.findSmallestValue(newPi);
+                solveSolution(newPi, smallestValue, baseDelay, makeOrderTimes, deadlineTimes, updatedSumOfMakeTimes, ordersList, currentDelay);
+            } else {
+                if (this.baseDelay == 0) {
+                    this.baseDelay = new Long(baseDelay);
+                    listOfSolutionObjects.add(new HelperObject(TypeSolution.STEP_SOLUTION, new ArrayList<String>(order), sp.generateOrderString(order), this.baseDelay));
+                } else if (this.baseDelay >= baseDelay) {
+                    this.baseDelay = new Long(baseDelay);
+                    listOfSolutionObjects.add(new HelperObject(TypeSolution.STEP_SOLUTION, new ArrayList<String>(order), sp.generateOrderString(new ArrayList<>(order)), this.baseDelay));
+                }
+                order.clear();
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -86,7 +174,7 @@ public class LogicSolution {
             staticBasePi.clear();
             staticListDeadlineTimes.clear();
             staticMapOrderShortNameToCurrentPiValue.clear();
-            lastUsedBasedPiRoads = new HashSet<>();
+            staticLastUsedBasedPiRoads = new HashSet<>();
         } catch (NullPointerException ex) {
             //no need to handle this
         }
@@ -151,12 +239,12 @@ public class LogicSolution {
         LogicSolution.staticMapOrderShortNameToCurrentPiValue = staticMapOrderShortNameToCurrentPiValue;
     }
 
-    public static Set<Long> getLastUsedBasedPiRoads() {
-        return lastUsedBasedPiRoads;
+    public static Set<Long> getStaticLastUsedBasedPiRoads() {
+        return staticLastUsedBasedPiRoads;
     }
 
-    public static void setLastUsedBasedPiRoads(Set<Long> lastUsedBasedPiRoads) {
-        LogicSolution.lastUsedBasedPiRoads = lastUsedBasedPiRoads;
+    public static void setStaticLastUsedBasedPiRoads(Set<Long> staticLastUsedBasedPiRoads) {
+        LogicSolution.staticLastUsedBasedPiRoads = staticLastUsedBasedPiRoads;
     }
 
     public List<String> getOrder() {
@@ -173,5 +261,29 @@ public class LogicSolution {
 
     public static Map<String, Long> getStaticMapOrderToMakeTime() {
         return staticMapOrderToMakeTime;
+    }
+
+    public static List<Long> getFinalDeadLineData() {
+        return finalDeadLineData;
+    }
+
+    public static void setFinalDeadLineData(List<Long> finalDeadLineData) {
+        LogicSolution.finalDeadLineData = finalDeadLineData;
+    }
+
+    public static List<Long> getFinalMakeOrderData() {
+        return finalMakeOrderData;
+    }
+
+    public static void setFinalMakeOrderData(List<Long> finalMakeOrderData) {
+        LogicSolution.finalMakeOrderData = finalMakeOrderData;
+    }
+
+    public static Long getFinalSumOfMakeOrderData() {
+        return finalSumOfMakeOrderData;
+    }
+
+    public static void setFinalSumOfMakeOrderData(Long finalSumOfMakeOrderData) {
+        LogicSolution.finalSumOfMakeOrderData = finalSumOfMakeOrderData;
     }
 }

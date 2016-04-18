@@ -358,7 +358,7 @@ public class MyController {
     }
 
     private void updateVisualData(LogicSolution ls) {
-        sumOfMakeTimes.setText(String.valueOf(LogicSolution.getStaticSumOfMakeOrderTimes()));
+        sumOfMakeTimes.setText(String.valueOf(LogicSolution.getFinalSumOfMakeOrderData()));
         solutionAfterOptimizationDelay.setText(String.valueOf(ls.getFinalDelay()));
         solutionAfterOptimization.setText(ls.getFinalOrder());
     }

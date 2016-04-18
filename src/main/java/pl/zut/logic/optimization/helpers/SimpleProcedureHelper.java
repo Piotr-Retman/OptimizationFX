@@ -15,32 +15,37 @@ public class SimpleProcedureHelper {
     /**
      * Metoda znajduje najmniejszą wartość w liście p(i) bazuje na ostatnich używanych wartościach p(i) oraz opóźnieniu
      *
-     * @param countedBasePi - lista p(i)
+     * @param countedBasePi        - lista p(i)
      * @param lastUsedBasedPiRoads - lista użytych wartości p(i)
-     * @param delay - opóźnienie
+     * @param delay                - opóźnienie
      * @return najmniejsza znaleziona wartość z listy p(i)
      */
     public long findSmallestValueOfPi(List<Long> countedBasePi, Set<Long> lastUsedBasedPiRoads, long delay) {
         Object[] objects = lastUsedBasedPiRoads.toArray();
         List<Long> collect = countedBasePi.stream().filter(aLong -> aLong < delay && !findOutIfWasUsed(aLong, lastUsedBasedPiRoads)).collect(Collectors.toList());
-        Long min = Collections.min(collect);
+        long min = 0;
+        if (collect.size() != 0) {
+            min = Collections.min(collect);
+        }
         return min;
     }
 
 
     /**
      * Metoda sprawdza i zwraca warunek logiczny czy dany element został już użyty w ostatnio używanych p(i)
-     * @param basePiElem - element do znalezienia
+     *
+     * @param basePiElem           - element do znalezienia
      * @param lastUsedBasedPiRoads - lista ostatnio używanych p(i)
      * @return warunek logiczny czy lista zawiera element
      */
-    private boolean findOutIfWasUsed(Long basePiElem, Set<Long> lastUsedBasedPiRoads) {
+    public boolean findOutIfWasUsed(Long basePiElem, Set<Long> lastUsedBasedPiRoads) {
         return lastUsedBasedPiRoads.contains(basePiElem);
     }
 
     /**
      * Metoda aktualizuje listę o podaną wartość
-     * @param min - wartość minimum do aktualizacji listy
+     *
+     * @param min                  - wartość minimum do aktualizacji listy
      * @param lastUsedBasedPiRoads - lista do zaktualizowania
      */
     public void updateListOfUsedPiData(Long min, Set<Long> lastUsedBasedPiRoads) {
@@ -49,12 +54,13 @@ public class SimpleProcedureHelper {
 
     /**
      * Metoda sprawdza czy lista p(i) posiada wartości mniejsze od aktualnego opoóźnienia.
+     *
      * @param lastUsedBasedPiRoads - lista ostatnio używanych elementow p(i)
-     * @param delay - opóźnienie
-     * @param staticBasePi - lista p(i)
+     * @param delay                - opóźnienie
+     * @param staticBasePi         - lista p(i)
      * @return warunek logiczny czy posiada mniejsze wartości opóźnienia lub nie
      */
-    private boolean isHavingSmallerValueThanCurrentDelay(Set<Long> lastUsedBasedPiRoads, long delay, List<Long> staticBasePi) {
+    public boolean isHavingSmallerValueThanCurrentDelay(Set<Long> lastUsedBasedPiRoads, long delay, List<Long> staticBasePi) {
         Object[] objects = lastUsedBasedPiRoads.toArray();
         Long lastUsedValueFromBasedPi = (Long) objects[0];
 
@@ -71,18 +77,20 @@ public class SimpleProcedureHelper {
 
     /**
      * Metoda aktualizuje sumę czasów obróbek poprzez różnicę aktualnej wartości o najmniejszą wartość
+     *
      * @param sumOfTheMakeOrderTimes - suma czasów obróbek T0
-     * @param smallestValue - wartość o którą suma ma zostać pomniejszona z czasów obróbek T0
+     * @param makeTimeData           - wartość o którą suma ma zostać pomniejszona z czasów obróbek T0
      * @return zaktualizowana wartość sumy czasów obróbek T0
      */
-    public long updateSumOfTheSmallestMakeOfOrderTimes(long sumOfTheMakeOrderTimes, long smallestValue) {
-        return sumOfTheMakeOrderTimes - smallestValue;
+    public long updateSumOfMakeOfOrderTimes(long sumOfTheMakeOrderTimes, long makeTimeData) {
+        return sumOfTheMakeOrderTimes - makeTimeData;
     }
 
     /**
      * Metoda aktualizuje opóźnienie o wartość
+     *
      * @param smallestValue - wartość o którą opóźnienie ma zostać zaktualizowane
-     * @param delay - wartość opóźnienia
+     * @param delay         - wartość opóźnienia
      * @return aktualna wartość opóźnienia
      */
     public long updateDelay(long smallestValue, long delay) {
@@ -96,6 +104,7 @@ public class SimpleProcedureHelper {
 
     /**
      * Metoda tworzy ciąg znaków określający układ zleceń
+     *
      * @param order - lista ze zleceniami w formie [z1,z2,z3 itp]
      * @return ciąg znaków np U(z1 z2 z3 z4)
      */
@@ -106,16 +115,21 @@ public class SimpleProcedureHelper {
                     int index = order.size() - 1 - value;
                     orderAsString[0] = orderAsString[0] + " " + order.get(index);
                 });
-        return StringWorker.generateRetrieveString("U(",orderAsString[0],")");
+        return StringWorker.generateRetrieveString("U(", orderAsString[0], ")");
     }
 
 
     /**
      * Metoda znajduje najmniejszą wartość listy
+     *
      * @param countedBasePi - lista w której ma zostac znaleziona najmniejsza wartość
      * @return najmniejsza wartość z listy
      */
     public long findSmallestValue(List<Long> countedBasePi) {
-        return Collections.min(countedBasePi);
+        if (countedBasePi.size() == 0) {
+            return 0;
+        } else {
+            return Collections.min(countedBasePi);
+        }
     }
 }
