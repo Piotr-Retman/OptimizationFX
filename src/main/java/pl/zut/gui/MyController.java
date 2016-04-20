@@ -236,6 +236,7 @@ public class MyController {
         List<SolutionObject> listOfSolutions = new ArrayList<>();
         for (Pair<String, String> value : values) {
             LogicSolution logicSolution = new LogicSolution();
+            DifferentMethodologies df = new DifferentMethodologies();
             SolutionObject so = new SolutionObject();
             logicSolution.clearStatics();
             String currentMakeTimes = value.getKey();
@@ -244,10 +245,28 @@ public class MyController {
             List<Long> currentDeadlineTimesAsList = StringWorker.prepareListBasedOnString(currentDeadlineTimes);
             logicSolution.solveThePoblem(currentMakeTimesAsList, currentDeadlineTimesAsList);
 
-            so.setCurrentMakeTimes(currentMakeTimes);
-            so.setCurrentDeadlineTimes(currentDeadlineTimes);
-            so.setFinalDelay(logicSolution.getFinalDelay());
-            so.setFinalOrder(logicSolution.getFinalOrder());
+            df.countIncreasingDeadLineTimesOrder(logicSolution);
+            df.countIncreasingMakeTimesOrder(logicSolution);
+            df.countSupplyIncreaseOrder(logicSolution);
+
+            so.setMakeTimes(currentMakeTimes);
+            so.setDeadLineTimes(currentDeadlineTimes);
+
+            //Mopt
+            so.setmOptDelay(logicSolution.getFinalDelay());
+            so.setmOptOrder(logicSolution.getFinalOrder());
+
+            //Mza - od najmniejszego do największego zapasu czasu
+            so.setmZaOrder(df.getSupplyIncreaseOrder());
+            so.setmZaDelay(df.getSupplyIncreaseTimeDelay());
+
+            //MO - rosnący czas obróbki
+            so.setmOOrder(df.getIncreaseMakeTimeOrder());
+            so.setmODelay(df.getIncreateMakeTimeDelay());
+
+            //MT - rosnący termin realizacji
+            so.setMtOrder(df.getIncreaseDeadLineTimeOrder());
+            so.setMtDelay(df.getIncreaseDeadLineTimeDelay());
 
             listOfSolutions.add(so);
         }
@@ -278,14 +297,22 @@ public class MyController {
                         ".",
                         " \n ",
                         "a:",
-                        so.getCurrentMakeTimes(), " \n ",
+                        so.getMakeTimes(), " \n ",
                         "b:",
-                        so.getCurrentDeadlineTimes(), " \n ",
-                        "Bazowe: \n ", String.valueOf(so.getStaticBaseDelay()), "[j] \n ",
-                        so.getBaseOrder(), " \n ",
-                        "Zoptymalizowane: \n ", String.valueOf(so.getFinalDelay()), "[j] \n ",
-                        so.getFinalOrder(),
-                        " \n ======= \n");
+                        so.getDeadLineTimes(), " \n ",
+                        "Mopt","\n",
+                        so.getmOptOrder(),"\n",
+                        String.valueOf(so.getmOptDelay()),"\n",
+                        "MO","\n",
+                        so.getmOptOrder(),"\n",
+                        String.valueOf(so.getmODelay()),"\n",
+                        "MT","\n",
+                        so.getMtOrder(),"\n",
+                        String.valueOf(so.getMtDelay()),"\n",
+                        "MZa","\n",
+                        so.getmZaOrder(),"\n",
+                        String.valueOf(so.getmZaDelay()),
+                        "\n ======= \n");
                 contentToShowUser = contentToShowUser + content;
                 LOGGER.info(content);
                 fileWriter.write(content);

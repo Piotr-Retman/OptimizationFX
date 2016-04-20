@@ -1,61 +1,104 @@
 package pl.zut.gui;
 
+import java.util.List;
+
 /**
  * Created by Retman on 2016-04-09.
  */
 public class SolutionObject {
-    private long finalDelay;
-    private String finalOrder;
-    private String baseOrder;
-    private long staticBaseDelay;
-    private String currentMakeTimes;
-    private String currentDeadlineTimes;
+    private String makeTimes;
+    private String deadLineTimes;
 
-    public long getFinalDelay() {
-        return finalDelay;
+    //MT
+    private long mtDelay;
+    private String mtOrder;
+    //Mza
+    private long mZaDelay;
+    private String mZaOrder;
+    //MO
+    private long mODelay;
+    private String mOOrder;
+    //Mopt
+    private long mOptDelay;
+    private String mOptOrder;
+
+    public long getMtDelay() {
+        return mtDelay;
     }
 
-    public void setFinalDelay(long finalDelay) {
-        this.finalDelay = finalDelay;
+    public void setMtDelay(long mtDelay) {
+        this.mtDelay = mtDelay;
     }
 
-    public String getFinalOrder() {
-        return finalOrder;
+    public String getMtOrder() {
+        return mtOrder;
     }
 
-    public void setFinalOrder(String finalOrder) {
-        this.finalOrder = finalOrder;
+    public void setMtOrder(String mtOrder) {
+        this.mtOrder = mtOrder;
     }
 
-    public String getBaseOrder() {
-        return baseOrder;
+    public long getmZaDelay() {
+        return mZaDelay;
     }
 
-    public void setBaseOrder(String baseOrder) {
-        this.baseOrder = baseOrder;
+    public void setmZaDelay(long mZaDelay) {
+        this.mZaDelay = mZaDelay;
     }
 
-    public long getStaticBaseDelay() {
-        return staticBaseDelay;
+    public String getmZaOrder() {
+        return mZaOrder;
     }
 
-    public void setStaticBaseDelay(long staticBaseDelay) {
-        this.staticBaseDelay = staticBaseDelay;
+    public void setmZaOrder(String mZaOrder) {
+        this.mZaOrder = mZaOrder;
     }
 
-    public String getCurrentMakeTimes() {
-        return currentMakeTimes;
+    public long getmODelay() {
+        return mODelay;
     }
 
-    public void setCurrentMakeTimes(String currentMakeTimes) {
-        this.currentMakeTimes = currentMakeTimes;
+    public void setmODelay(long mODelay) {
+        this.mODelay = mODelay;
     }
 
-    public String getCurrentDeadlineTimes() {
-        return currentDeadlineTimes;
+    public String getmOOrder() {
+        return mOOrder;
     }
 
-    public void setCurrentDeadlineTimes(String currentDeadlineTimes) {
-        this.currentDeadlineTimes = currentDeadlineTimes;
+    public void setmOOrder(String mOOrder) {
+        this.mOOrder = mOOrder;
+    }
+
+    public long getmOptDelay() {
+        return mOptDelay;
+    }
+
+    public void setmOptDelay(long mOptDelay) {
+        this.mOptDelay = mOptDelay;
+    }
+
+    public String getmOptOrder() {
+        return mOptOrder;
+    }
+
+    public void setmOptOrder(String mOptOrder) {
+        this.mOptOrder = mOptOrder;
+    }
+
+    public String getMakeTimes() {
+        return makeTimes;
+    }
+
+    public void setMakeTimes(String makeTimes) {
+        this.makeTimes = makeTimes;
+    }
+
+    public String getDeadLineTimes() {
+        return deadLineTimes;
+    }
+
+    public void setDeadLineTimes(String deadLineTimes) {
+        this.deadLineTimes = deadLineTimes;
     }
 }

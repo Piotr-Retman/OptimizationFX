@@ -33,8 +33,8 @@
       <Label layoutX="12.0" layoutY="200.0" prefHeight="17.0" prefWidth="121.0" text="Czas obróbek T0[]" />
       <TextField id="sumOfMakeTimes" fx:id="sumOfMakeTimes" disable="true" layoutX="178.0" layoutY="453.0" prefHeight="29.0" prefWidth="322.0" />
       <Label layoutX="17.0" layoutY="459.0" text="Suma czasów obróbek So" />
-      <TextField id="solutionFirst" fx:id="mtOrder" disable="true" layoutX="178.0" layoutY="500.0" />
-      <TextField id="solutionAfterOptimization" fx:id="solutionAfterOptimization" disable="true" layoutX="178.0" layoutY="538.0" />
+      <TextField id="solutionFirst" fx:id="mtOrder" editable="false" layoutX="178.0" layoutY="500.0" />
+      <TextField id="solutionAfterOptimization" fx:id="solutionAfterOptimization" editable="false" layoutX="178.0" layoutY="538.0" />
       <Label layoutX="17.0" layoutY="504.0" text="Rozwiązanie bazowe MT" />
       <Label layoutX="17.0" layoutY="544.0" text="Rozwiązanie optymalne Mopt" />
       <TextField id="solutionFirstDelay" fx:id="mtDelay" disable="true" layoutX="346.0" layoutY="500.0" prefHeight="25.0" prefWidth="155.0" />
@@ -47,10 +47,10 @@
       <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
       <Separator layoutX="8.0" layoutY="142.0" prefHeight="3.0" prefWidth="497.0" />
       <TableView fx:id="tableData" layoutX="513.0" layoutY="31.0" prefHeight="364.0" prefWidth="834.0" />
-      <TextField fx:id="mzaOrder" disable="true" layoutX="178.0" layoutY="578.0" />
+      <TextField fx:id="mzaOrder" editable="false" layoutX="178.0" layoutY="578.0" />
       <TextField fx:id="mzaDelay" disable="true" layoutX="346.0" layoutY="578.0" prefHeight="25.0" prefWidth="155.0" />
       <TextField fx:id="moDelay" disable="true" layoutX="346.0" layoutY="618.0" prefHeight="25.0" prefWidth="155.0" />
-      <TextField fx:id="moOrder" disable="true" layoutX="178.0" layoutY="618.0" />
+      <TextField fx:id="moOrder" editable="false" layoutX="178.0" layoutY="618.0" />
       <Label layoutX="17.0" layoutY="582.0" text="Rozwiązanie  Mza" />
       <Label layoutX="15.0" layoutY="622.0" text="Rozwiązanie Mo" />
       <Text layoutX="668.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DANE DO OBLICZEŃ" />
