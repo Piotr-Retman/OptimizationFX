@@ -33,6 +33,7 @@ public class MyController {
     List<String> order;
 
     Map<String, Long> mapMakeTimeOrder;
+    Map<String, Long> mapDeadLineTimeOrder;
 
     Stage primaryStage;
 
@@ -157,7 +158,7 @@ public class MyController {
 
             Stage stage = new Stage();
 
-            String[] machines = new String[]{"M1"};
+            String[] machines = new String[]{"M1","Terminy"};
 
             final NumberAxis xAxis = new NumberAxis();
             final CategoryAxis yAxis = new CategoryAxis();
@@ -173,17 +174,21 @@ public class MyController {
             yAxis.setTickLabelGap(10);
             yAxis.setCategories(FXCollections.observableArrayList(Arrays.asList(machines)));
 
-            chart.setTitle("Machine Monitoring");
+            chart.setTitle("Diagram Gantta");
             chart.setLegendVisible(true);
             chart.setBlockHeight(50);
             String machine;
 
+            //M1
             machine = machines[0];
             XYChart.Series series = new XYChart.Series();
+            fillDataSeries(series, machine, TypeMap.WITH_MAKE_ORDER_TIMES);
 
-            fillDataSeries(series, machine);
+            machine = machines[1];
+            XYChart.Series seriesDeadlines = new XYChart.Series();
+            fillDataSeries(seriesDeadlines, machine, TypeMap.WITH_DEADLINE_TIMES);
 
-            chart.getData().addAll(series);
+            chart.getData().addAll(series,seriesDeadlines);
 
             chart.getStylesheets().add(getClass().getResource("/css/ganttchart.css").toExternalForm());
 
@@ -195,16 +200,21 @@ public class MyController {
         }
     }
 
-    private void fillDataSeries(XYChart.Series series, String machine) {
+    private void fillDataSeries(XYChart.Series machineOneSeries, String machine, TypeMap typeMap) {
         long startPoint = 0;
         long endPoint = 0;
         LOGGER.setLevel(Level.ALL);
         for (int i = order.size() - 1; i >= 0; i--) {
             String orderName = order.get(i);
-            Long aLong = mapMakeTimeOrder.get(orderName);
+            Long aLong = 0L;
+            if(typeMap.equals(TypeMap.WITH_MAKE_ORDER_TIMES)) {
+               aLong  = mapMakeTimeOrder.get(orderName);
+            }else if(typeMap.equals(TypeMap.WITH_DEADLINE_TIMES)){
+                aLong  = mapDeadLineTimeOrder.get(orderName);
+            }
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
-            series.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
+            machineOneSeries.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
             LOGGER.info("Dane do diagramu Gantta: " + StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
             startPoint = endPoint;
         }
@@ -307,6 +317,7 @@ public class MyController {
 
     private void runAlgorithm(LogicSolution ls, List<Long> makeTimeArrayAsList, List<Long> timeOfOrderArrayAsList) {
         mapMakeTimeOrder = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeTimeArrayAsList, TypeMap.STRING_ON_LONG);
+        mapDeadLineTimeOrder = (Map<String, Long>) LogicHelper.createMapOrderAndTime(timeOfOrderArrayAsList, TypeMap.STRING_ON_LONG);
         updateSupplyData(makeTimeArrayAsList, timeOfOrderArrayAsList);
         ls.clearStatics();
         ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList);
