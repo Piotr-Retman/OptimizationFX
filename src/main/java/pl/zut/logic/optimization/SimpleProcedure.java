@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * Created by Retman on 2016-04-15.
+ * Klasa rozszerzająca SimpleProcedureHelpera
  */
 class SimpleProcedure extends SimpleProcedureHelper {
 
@@ -41,6 +41,11 @@ class SimpleProcedure extends SimpleProcedureHelper {
         return sumOfMakeOrderTimes[0];
     }
 
+    /**
+     * Tworzenie listy nazw zleceń
+     * @param numberOfOrders liczba zleceń
+     * @return
+     */
     public List<String> createStaticOrderNames(int numberOfOrders) {
         List<String> orders = new ArrayList<>();
         IntStream.range(0,numberOfOrders).forEach(value -> {

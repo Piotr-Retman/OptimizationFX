@@ -5,12 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -116,6 +118,11 @@ public class MyController {
     @FXML
     private TextField moDelay = new TextField();
 
+    /**
+     * Obsługa przycisku ładowania danych
+     *
+     * @throws IOException
+     */
     @FXML
     private void handleLoadData() throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -126,6 +133,12 @@ public class MyController {
     }
 
 
+    /**
+     * Obsługa przycisku START
+     *
+     * @param event parametr określający działanie użytkownika (w tym przypadku obsługiwany jest onSubmit)
+     * @throws IOException
+     */
     @FXML
     private void handleSubmitButtonAction(ActionEvent event) throws IOException {
         LOGGER.setLevel(Level.ALL);
@@ -138,9 +151,9 @@ public class MyController {
 
             int sizeTimeOfOrderArrayAsList = timeOfOrderArrayAsList.size();
             int sizeMakeTimeArrayAsList = makeTimeArrayAsList.size();
-            boolean isOk = validator.validateSingleCountPossible(makeTimeArray.getText(), timeOfOrderArray.getText(),sizeMakeTimeArrayAsList,sizeTimeOfOrderArrayAsList);
+            boolean isOk = validator.validateSingleCountPossible(makeTimeArray.getText(), timeOfOrderArray.getText(), sizeMakeTimeArrayAsList, sizeTimeOfOrderArrayAsList);
 
-            if(isOk){
+            if (isOk) {
                 runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
                 runDifferentSolutions(ls);
             }
@@ -151,14 +164,31 @@ public class MyController {
         }
     }
 
+    @FXML
+    private void handleHelpWindow(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Stage stage = new Stage();
+        fxmlLoader.setController(new HelperController());
+        TabPane p = fxmlLoader.load(getClass().getResource("/fxml/help.fxml").openStream());
+        ObservableList<Tab> tabs = p.getTabs();
+        Scene scene = new Scene(p, 600, 500);
+        stage.setTitle("Pomoc");
+        stage.setScene(scene);
+        stage.show();
+    }
 
+    /**
+     * Obsługa przycisku generowania diagramów Gantta
+     *
+     * @param event onSubmit na przycisku RYSUJ WYKRES
+     */
     @FXML
     private void handleGanttBtnAction(ActionEvent event) {
         try {
 
             Stage stage = new Stage();
 
-            String[] machines = new String[]{"M1","Terminy"};
+            String[] machines = new String[]{"M1", "Terminy"};
 
             final NumberAxis xAxis = new NumberAxis();
             final CategoryAxis yAxis = new CategoryAxis();
@@ -188,7 +218,7 @@ public class MyController {
             XYChart.Series seriesDeadlines = new XYChart.Series();
             fillDataSeries(seriesDeadlines, machine, TypeMap.WITH_DEADLINE_TIMES);
 
-            chart.getData().addAll(series,seriesDeadlines);
+            chart.getData().addAll(series, seriesDeadlines);
 
             chart.getStylesheets().add(getClass().getResource("/css/ganttchart.css").toExternalForm());
 
@@ -200,6 +230,13 @@ public class MyController {
         }
     }
 
+    /**
+     * Uzupełnia dane na wykresoe
+     *
+     * @param machineOneSeries seria danych
+     * @param machine          nazwa maszyny
+     * @param typeMap          typ mapy z danymi które mają zostać przypisane do danego diagramu
+     */
     private void fillDataSeries(XYChart.Series machineOneSeries, String machine, TypeMap typeMap) {
         long startPoint = 0;
         long endPoint = 0;
@@ -207,10 +244,10 @@ public class MyController {
         for (int i = order.size() - 1; i >= 0; i--) {
             String orderName = order.get(i);
             Long aLong = 0L;
-            if(typeMap.equals(TypeMap.WITH_MAKE_ORDER_TIMES)) {
-               aLong  = mapMakeTimeOrder.get(orderName);
-            }else if(typeMap.equals(TypeMap.WITH_DEADLINE_TIMES)){
-                aLong  = mapDeadLineTimeOrder.get(orderName);
+            if (typeMap.equals(TypeMap.WITH_MAKE_ORDER_TIMES)) {
+                aLong = mapMakeTimeOrder.get(orderName);
+            } else if (typeMap.equals(TypeMap.WITH_DEADLINE_TIMES)) {
+                aLong = mapDeadLineTimeOrder.get(orderName);
             }
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
@@ -220,6 +257,12 @@ public class MyController {
         }
     }
 
+    /**
+     * Metoda sprawdza czy dany index jest parzysty lub nie i na tej podstawie ustala styl w CSS
+     *
+     * @param index indeks danych
+     * @return nazwę klasy CSS
+     */
     private String checkStatus(int index) {
         String status = "";
         if ((index % 2) == 0) {
@@ -231,6 +274,11 @@ public class MyController {
         return status;
     }
 
+    /**
+     * Metoda działająca w trybie wielu obliczeń
+     *
+     * @param mapCountNumAndPairTimes
+     */
     private void runMultipleAlgorithmSolutions(Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
         Collection<Pair<String, String>> values = mapCountNumAndPairTimes.values();
         List<SolutionObject> listOfSolutions = new ArrayList<>();
@@ -276,7 +324,7 @@ public class MyController {
     private void saveToFile(List<SolutionObject> listOfSolutions) {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.setTitle("Save Resource File");
+        fileChooser.setTitle("Zapisywanie");
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showSaveDialog(primaryStage);
 
@@ -300,17 +348,17 @@ public class MyController {
                         so.getMakeTimes(), " \n ",
                         "b:",
                         so.getDeadLineTimes(), " \n ",
-                        "Mopt","\n",
-                        so.getmOptOrder(),"\n",
-                        String.valueOf(so.getmOptDelay()),"\n",
-                        "MO","\n",
-                        so.getmOptOrder(),"\n",
-                        String.valueOf(so.getmODelay()),"\n",
-                        "MT","\n",
-                        so.getMtOrder(),"\n",
-                        String.valueOf(so.getMtDelay()),"\n",
-                        "MZa","\n",
-                        so.getmZaOrder(),"\n",
+                        "Mopt", "\n",
+                        so.getmOptOrder(), "\n",
+                        String.valueOf(so.getmOptDelay()), "\n",
+                        "MO", "\n",
+                        so.getmOOrder(), "\n",
+                        String.valueOf(so.getmODelay()), "\n",
+                        "MT", "\n",
+                        so.getMtOrder(), "\n",
+                        String.valueOf(so.getMtDelay()), "\n",
+                        "MZa", "\n",
+                        so.getmZaOrder(), "\n",
                         String.valueOf(so.getmZaDelay()),
                         "\n ======= \n");
                 contentToShowUser = contentToShowUser + content;
@@ -369,7 +417,6 @@ public class MyController {
         List<TableObject> tableObjects = generateTableObjectsList(order, mapMakeTimeToOrder, mapDeadlineToOrder);
 
         ObservableList<TableObject> data = FXCollections.observableArrayList(tableObjects);
-
 
         tableData.getColumns().addAll(orderColumn, makeOrderTimeColumn, deadlineTimeColumn);
         orderColumn.setCellValueFactory(

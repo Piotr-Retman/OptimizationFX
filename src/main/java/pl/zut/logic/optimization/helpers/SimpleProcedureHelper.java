@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Created by Retman on 2016-04-15.
+ * Klasa zawiera metody wspierające podstawowe działania w algorytmie
  */
 public class SimpleProcedureHelper {
 

@@ -1,7 +1,7 @@
 package pl.zut.gui;
 
 /**
- * Created by Retman on 2016-03-31.
+ * Obiekt tablicowy do GUI
  */
 public class TableObject {
 

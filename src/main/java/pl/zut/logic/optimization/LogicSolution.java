@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Retman on 2015-09-21.
+ * Klasa rozwiązująca problem Mopt
  */
 public class LogicSolution {
 
@@ -41,6 +41,12 @@ public class LogicSolution {
     public static Long finalSumOfMakeOrderData = 0L;
     private boolean flag = true;
     private int size = 0;
+
+    /**
+     * Metoda to punkt startowy rozwiązania problemu Mopt
+     * @param makeOrderTimes czasy obróbek T0
+     * @param deadlineTimes czasy terminów Tt
+     */
     public void solveThePoblem(List<Long> makeOrderTimes,
                                List<Long> deadlineTimes) {
         SimpleProcedure sp = new SimpleProcedure();
@@ -68,6 +74,11 @@ public class LogicSolution {
 
     }
 
+    /**
+     * Pełna logika wykonania algorytmu
+     * @param countedBasePi obliczone p(i) bazowe
+     * @param sumOfTheMakeOrderTimes suma czasów obróbek
+     */
     private void fullAlgorithmJob(List<Long> countedBasePi, Long sumOfTheMakeOrderTimes) {
         if (countedBasePi.size() != 0) {
             SimpleProcedure sp = new SimpleProcedure();
@@ -110,6 +121,14 @@ public class LogicSolution {
         }
     }
 
+    /**
+     * Finalizacja algorytmu
+     * @param order układ
+     * @param makeOrderData lista czasów obróbek
+     * @param deadLineData lista terminów
+     * @param sumOfMakeOrderTimes suma czasów obróbek
+     * @param orderNames lista nazw zleceń np [z1,z2,z3]
+     */
     private void finalizeAlgorithm(List<String> order, ArrayList<Long> makeOrderData, ArrayList<Long> deadLineData, Long sumOfMakeOrderTimes, ArrayList<String> orderNames) {
         SimpleProcedure sp = new SimpleProcedure();
         long delay = 0;
@@ -129,6 +148,18 @@ public class LogicSolution {
         finalDelay = delay;
     }
 
+    /**
+     * Rozwiązuje aktualny punkt algorytmu
+     *
+     * @param countedBasePi bazowe p(i)
+     * @param basePiElem element listy p(i)
+     * @param baseDelay opóźnienie
+     * @param makeOrderTimes lista czasów obróbek
+     * @param deadlineTimes lista terminów
+     * @param sumOfTheMakeOrderTimes suma czasów obróbek
+     * @param ordersList lista zleceń
+     * @param currentDelay akutalne opóźnienie
+     */
     private void solveSolution(List<Long> countedBasePi,
                                Long basePiElem,
                                long baseDelay,

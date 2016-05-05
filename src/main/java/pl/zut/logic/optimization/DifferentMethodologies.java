@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 /**
- * Created by Retman on 2016-03-31.
+ * Klasa zawiera metody potrzebne do obliczenia MT,MO,MZa
  */
 public class DifferentMethodologies extends LogicSolution {
 
@@ -26,6 +26,10 @@ public class DifferentMethodologies extends LogicSolution {
 
     private List<String> helperKeys = new ArrayList<>();
 
+    /**
+     * Oblicza metodę MT
+     * @param ls obiekt klasy LogicSolution
+     */
     public void countIncreasingDeadLineTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MT...");
@@ -41,6 +45,10 @@ public class DifferentMethodologies extends LogicSolution {
 
     }
 
+    /**
+     * Oblicza metodę MO
+     * @param ls obiekt klasy LogicSolution
+     */
     public void countIncreasingMakeTimesOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą M0...");
@@ -57,6 +65,10 @@ public class DifferentMethodologies extends LogicSolution {
     }
 
 
+    /**
+     * Oblicza metodę MZa
+     * @param ls obiekt klasy LogicSolution
+     */
     public void countSupplyIncreaseOrder(LogicSolution ls) {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MZa...");
@@ -75,6 +87,12 @@ public class DifferentMethodologies extends LogicSolution {
         supplyIncreaseTimeDelay = delayCount(mapOrderAndTimeDeadLine, mapOrderAndTimeMakeTime);
     }
 
+    /**
+     * Oblicza opóźnienie
+     * @param mapOrderAndTimeDeadLine mapa zlecenie / czasy terminów
+     * @param mapOrderAndTimeMakeTime mapa zlecenie / czasy obróbek
+     * @return
+     */
     private long delayCount(Map<String, Long> mapOrderAndTimeDeadLine, Map<String, Long> mapOrderAndTimeMakeTime) {
         final long[] timeLaps = {0, 0};
         IntStream.range(0, helperKeys.size()).forEach(value -> {
@@ -92,6 +110,13 @@ public class DifferentMethodologies extends LogicSolution {
     }
 
 
+    /**
+     * Przygotowuje układ zleceń jako ciąg znaków
+     * @param mappedValues zmapowane wartości
+     * @param keys klucze
+     * @param supplyLongs zapasy czasu
+     * @return np U(z1 z2 z3)
+     */
     private String prepareOrderForSupplyIncreaseOrder(List<Long> mappedValues, List<String> keys, List<Long> supplyLongs) {
         final String[] ordr = {""};
         helperKeys.clear();

@@ -14,7 +14,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
 
         FXMLLoader fxmlLoader = new FXMLLoader();
         MyController myController = new MyController();
@@ -23,9 +22,7 @@ public class Main extends Application {
         Pane p = fxmlLoader.load(getClass().getResource("/fxml/main.fxml").openStream());
 
         Scene scene = new Scene(p, 1366, 768);
-
-//        primaryStage.setFullScreen(true);
-        primaryStage.setTitle("Optimization");
+        primaryStage.setTitle("OptimizationFX");
         primaryStage.setScene(scene);
         primaryStage.show();
 

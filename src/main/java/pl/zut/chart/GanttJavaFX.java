@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ *Klasa generuje diagram Gantta na podstawie podanych serii danych
+ */
 public class GanttJavaFX<X, Y> extends XYChart<X, Y> {
 
     public static class ExtraData {
@@ -149,6 +152,10 @@ public class GanttJavaFX<X, Y> extends XYChart<X, Y> {
         }
     }
 
+    /**
+     * Usuwanie serii
+     * @param series seria danych
+     */
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
         for (XYChart.Data<X, Y> d : series.getData()) {

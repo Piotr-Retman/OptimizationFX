@@ -3,7 +3,7 @@ package pl.zut.gui;
 import java.util.List;
 
 /**
- * Created by Retman on 2016-04-09.
+ * Obiekt służy jako pomoc do zapisu danych do pliku
  */
 public class SolutionObject {
     private String makeTimes;

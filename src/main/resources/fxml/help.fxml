@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+  <tabs>
+    <Tab text="Autor">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="136.0" layoutY="38.0" prefHeight="17.0" prefWidth="329.0" text="Rok produkcji: 2016" />
+                  <Label layoutX="30.0" layoutY="340.0" prefHeight="17.0" prefWidth="536.0" text="Na podstawie algorytmu dr hab. inż. prof. ZUT Andrzeja Jardziocha oraz dr Roberta Dylewskiego" />
+                  <Label layoutX="30.0" layoutY="307.0" prefHeight="17.0" prefWidth="52.0" text="Link do" />
+                  <Hyperlink fx:id="article" layoutX="69.0" layoutY="304.0" onAction="#handleOpenArticle" text="artykułu" />
+                  <Label layoutX="136.0" layoutY="14.0" prefHeight="17.0" prefWidth="329.0" text="Twórca implementacji: inż. Piotr Retmańczyk" />
+                  <Label layoutX="136.0" layoutY="66.0" text="E-Mail: piotr.retmanczyk@gmail.com" />
+                  <Hyperlink fx:id="myPage" layoutX="180.0" layoutY="92.0" onAction="#handleOpenMyWebsite" text="piotrretmanczyk.pl" />
+                  <Label layoutX="136.0" layoutY="95.0" text="Strona:" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Pomoc">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="14.0" text="1. Wybór trybu pracy" />
+                  <Label layoutX="14.0" layoutY="31.0" text="a) kliknij w głównym oknie na CheckBox TRYB POJEDYNCZY lub TRYB WIELU OBLICZEŃ" />
+                  <Label layoutX="15.0" layoutY="69.0" text="2. Uruchamianie pojedynczego obliczenia" />
+                  <Label layoutX="14.0" layoutY="86.0" text="a) uzupełnij czasy obróbek To[j] oraz czasy terminów Tt[j]" />
+                  <Label layoutX="14.0" layoutY="103.0" text="b) naciśnij przycisk START" />
+                  <Label layoutX="14.0" layoutY="134.0" text="3. Uruchamianie trybu wielu obliczeń" />
+                  <Label layoutX="14.0" layoutY="151.0" text="a) Przygotuj plik tekstowy zgodnie z formatem jak po prawo" />
+                  <TextArea layoutX="386.0" layoutY="120.0" prefHeight="227.0" prefWidth="200.0" text="&#10;&#10;1&#10;a: num1,num2,num3&#10;b: num1,num2,num3&#10;.&#10;.&#10;.&#10;n&#10;a: 1,...,n , 1,...,n&#10;a: 1,...,n , 1,...,n&#10;&#10;&#10;&#10;&#10;&#10;&#10;" />
+                  <Label layoutX="14.0" layoutY="168.0" text="b) Delimitter powinien być przecinkiem!" />
+                  <Label layoutX="14.0" layoutY="186.0" text="c) Wczytaj przygotowany plik przez kliknięcie WCZYTAJ DANE" />
+                  <Label layoutX="14.0" layoutY="203.0" text="d) Kliknij START" />
+                  <Label layoutX="14.0" layoutY="220.0" text="e) Zapisz nowy plik tekstowy po pokazaniu się okna dialogowego" />
+                  <Label layoutX="14.0" layoutY="245.0" text="4. Generowanie diagramu Gantta" />
+                  <Label layoutX="14.0" layoutY="262.0" text="a) UWAGA! Tryb działa tylko dla obliczeń pojedynczych" />
+                  <Label layoutX="14.0" layoutY="279.0" text="b) Uzupełni dane tak jak w przypadku TRYBU POJEDYNCZEGO" />
+                  <Label layoutX="14.0" layoutY="296.0" text="b) naciśnij przycisk START i po obliczeniu RYSUJ WYKRES" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+  </tabs>
+</TabPane>

@@ -9,11 +9,16 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
- * Created by Retman on 2016-01-14.
+ * Klasa wspierająca logikę algorytmów
  */
 public class LogicHelper {
 
 
+    /**
+     * Metoda tworzy listę w oparciu o ciąg znaków
+     * @param arrayAsString ciąg znaków do generowania listy
+     * @return lista wartości
+     */
     public static List<Long> createListOfValuesBasedOnString(String arrayAsString) {
         List<Long> arrayOfValues = new ArrayList<>();
         String[] split = arrayAsString.split(",");
@@ -23,6 +28,12 @@ public class LogicHelper {
         return arrayOfValues;
     }
 
+    /**
+     * Tworzy mapę w oparciu o wybierany typ oraz poukładaną listę czasów
+     * @param orderTimesToCreateMap poukładana lista czasów
+     * @param typeMap typ mapy
+     * @return mapę określoną przez podany typ jeśli typ nie będzie prawidłowy TypeMap.LONG_ON_STRING lub TypeMap.STRING_ON_LONG zwróci null
+     */
     public static Map<?, ?> createMapOrderAndTime(List<Long> orderTimesToCreateMap, TypeMap typeMap) {
         Map<String, Long> mapOrderTime = new HashMap<>();
         Map<Long, String> mapTimeOrder = new HashMap<>();

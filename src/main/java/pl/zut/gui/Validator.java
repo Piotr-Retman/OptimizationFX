@@ -14,12 +14,18 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * Created by Retman on 2016-04-15.
+ * Klasa Validator służy walidacji danych w trybie pojedynczym i multi
  */
 public class Validator {
 
     private Map<Integer, Pair<String, String>> mapCountNumAndPairTimes = new HashMap<>();
 
+    /**
+     * Walidacja ścieżki do pliku
+     * @param textOfPath ścieżka
+     * @return dane
+     * @throws IOException
+     */
     public String validateMultipleCountsAndReturnFileAsString(String textOfPath) throws IOException {
         boolean hasData = true;
 
@@ -34,6 +40,14 @@ public class Validator {
         return lines;
     }
 
+    /**
+     * Walidacja pojedynczego obliczenia
+     * @param makeTimeText lista czasów obróbek jako ciag znaków
+     * @param timeOfOrderArrayText lista terminów jako ciag znaków
+     * @param sizeMakeTimeArrayAsList rozmiar listy czasów obróbek
+     * @param sizeTimeOfOrderArrayAsList rozmiar listy terminów
+     * @return wartość logiczną okreslającą pozytywnie lub negatywnie zwalidowane dane
+     */
     public boolean validateSingleCountPossible(String makeTimeText, String timeOfOrderArrayText, int sizeMakeTimeArrayAsList, int sizeTimeOfOrderArrayAsList) {
         boolean hasData = true;
 
@@ -51,6 +65,12 @@ public class Validator {
         return isOk;
     }
 
+    /**
+     * Walidacja danych z pojedynczego obliczenia
+     * @param sizeMakeTimeArrayAsList rozmiar listy czasów obróbek
+     * @param sizeTimeOfOrderArrayAsList rozmiar listy terminów
+     * @return
+     */
     private boolean validateInsideDataForSingleCounts(int sizeMakeTimeArrayAsList, int sizeTimeOfOrderArrayAsList) {
 
         boolean equal = (sizeTimeOfOrderArrayAsList == sizeMakeTimeArrayAsList && sizeMakeTimeArrayAsList != 0);
@@ -64,11 +84,22 @@ public class Validator {
         return false;
     }
 
+    /**
+     * Metoda generuje okno z informacją o błędzie
+     * @param msg informacja
+     * @param alertType typ błędu np ERROR, INFO itp
+     */
     private void generateAlert(String msg, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType, msg, ButtonType.OK);
         alert.showAndWait();
     }
 
+    /**
+     * Walidacja danych z pliku i uruchomienie metody multi obliczeń
+     * @param path ścieżka do pliku
+     * @return dane jako ciąg znaków
+     * @throws IOException
+     */
     private String validateFileDataAndRunMultipleCounts(String path) throws IOException {
         Stream<String> lines = Files.lines(Paths.get(path));
         final String[] makeOrderTime = {null};
@@ -91,6 +122,16 @@ public class Validator {
         return linesAsString[0];
     }
 
+    /**
+     * Walidacja aktualnej linii z pliku
+     *
+     * @param s linia z pliku
+     * @param makeOrderTime czasy obróbek w tablicy asocjacyjnej
+     * @param deadlineTimes terminy w tablicy asocjacyjnej
+     * @param id tablica identyfikatorów
+     * @param lineNum numer linii z pliku
+     * @throws Exception wyjątek generuje informację i błąd
+     */
     private void validateCurrentStringFromFile(String s, String[] makeOrderTime, String[] deadlineTimes, int[] id, int lineNum) throws Exception {
         if (s.startsWith("a") && Objects.equals(validateData(s), Boolean.TRUE)) {
             makeOrderTime[0] = s.replace("a:", "");
@@ -106,6 +147,13 @@ public class Validator {
         }
     }
 
+    /**
+     * Aktualizacja mapy numer na parę czasów
+     * @param makeOrderTime tablica czasów obróbki
+     * @param deadlineTimes tablica terminów
+     * @param id tablica identyfikatorów indeksu
+     * @param mapCountNumAndPairTimes mapa do aktualizacji
+     */
     private void updateMap(String[] makeOrderTime, String[] deadlineTimes, int[] id, Map<Integer, Pair<String, String>> mapCountNumAndPairTimes) {
         if (makeOrderTime[0] != null && deadlineTimes[0] != null && id[0] != -1) {
             mapCountNumAndPairTimes.put(id[0], new Pair<>(makeOrderTime[0], deadlineTimes[0]));
@@ -115,11 +163,19 @@ public class Validator {
         }
     }
 
-
+    /**
+     * Zwraca mapę numer na parę
+     */
     public Map<Integer, Pair<String, String>> getMapCountNumAndPairTimes() {
         return mapCountNumAndPairTimes;
     }
 
+    /**
+     * Metoda waliduje dane na podstawie typu generycznego
+     * @param s typ generyczny
+     * @return wartość logiczną czy dane są wpisane poprawnie
+     * @throws Exception wyjątek generuje okno błędu
+     */
     private <T> T validateData(T s) throws Exception {
         T ok = (T) Boolean.FALSE;
         if (s instanceof Integer) {

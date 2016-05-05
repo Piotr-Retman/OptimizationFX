@@ -44,7 +44,7 @@
       <TextField fx:id="supply" disable="true" editable="false" layoutX="13.0" layoutY="290.0" prefHeight="25.0" prefWidth="475.0" />
       <Label layoutX="14.0" layoutY="323.0" prefHeight="17.0" prefWidth="121.0" text="Zapas" />
       <Separator layoutX="4.0" layoutY="350.0" prefHeight="3.0" prefWidth="497.0" />
-      <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
+      <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleHelpWindow" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
       <Separator layoutX="8.0" layoutY="142.0" prefHeight="3.0" prefWidth="497.0" />
       <TableView fx:id="tableData" layoutX="513.0" layoutY="31.0" prefHeight="364.0" prefWidth="834.0" />
       <TextField fx:id="mzaOrder" editable="false" layoutX="178.0" layoutY="578.0" />

@@ -5,7 +5,7 @@ import pl.zut.logic.optimization.TypeSolution;
 import java.util.List;
 
 /**
- * Created by Retman on 2016-04-15.
+ * Obiekt pomocniczy
  */
 public class HelperObject {
 
