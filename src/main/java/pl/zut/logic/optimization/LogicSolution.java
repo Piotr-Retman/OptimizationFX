@@ -44,51 +44,55 @@ public class LogicSolution {
 
     /**
      * Metoda to punkt startowy rozwiązania problemu Mopt
+     *
      * @param makeOrderTimes czasy obróbek T0
-     * @param deadlineTimes czasy terminów Tt
+     * @param deadlineTimes  czasy terminów Tt
      */
     public void solveThePoblem(List<Long> makeOrderTimes,
                                List<Long> deadlineTimes) {
-        SimpleProcedure sp = new SimpleProcedure();
-        long sumOfTheMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
-        staticSumOfMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
+        try {
+            SimpleProcedure sp = new SimpleProcedure();
+            long sumOfTheMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
+            staticSumOfMakeOrderTimes = sp.countSumOfMakeOrderTimes(makeOrderTimes);
 
-        List<Long> countedBasePi = sp.countPi(sumOfTheMakeOrderTimes, deadlineTimes);
-        staticBasePi = new ArrayList<>(countedBasePi);
-        staticListMakeOrderTimes = new ArrayList<>(makeOrderTimes);
-        staticListDeadlineTimes = new ArrayList<>(deadlineTimes);
-        if(flag) {
-            staticOrderNames = sp.createStaticOrderNames(makeOrderTimes.size());
-            finalDeadLineData = new ArrayList<>(staticListDeadlineTimes);
-            finalMakeOrderData = new ArrayList<>(staticListMakeOrderTimes);
-            finalStaticOrderNames = new ArrayList<>(staticOrderNames);
-            finalSumOfMakeOrderData = new Long(staticSumOfMakeOrderTimes);
-            staticMapOrderToDeadline = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.STRING_ON_LONG);
-            staticMapOrderToMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.STRING_ON_LONG);
-            staticMapDeadlineToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.LONG_ON_STRING);
-            staticMapMakeTimeToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.LONG_ON_STRING);
-            size = makeOrderTimes.size() - 1;
-            flag = false;
+            List<Long> countedBasePi = sp.countPi(sumOfTheMakeOrderTimes, deadlineTimes);
+            staticBasePi = new ArrayList<>(countedBasePi);
+            staticListMakeOrderTimes = new ArrayList<>(makeOrderTimes);
+            staticListDeadlineTimes = new ArrayList<>(deadlineTimes);
+            if (flag) {
+                staticOrderNames = sp.createStaticOrderNames(makeOrderTimes.size());
+                finalDeadLineData = new ArrayList<>(staticListDeadlineTimes);
+                finalMakeOrderData = new ArrayList<>(staticListMakeOrderTimes);
+                finalStaticOrderNames = new ArrayList<>(staticOrderNames);
+                finalSumOfMakeOrderData = new Long(staticSumOfMakeOrderTimes);
+                staticMapOrderToDeadline = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.STRING_ON_LONG);
+                staticMapOrderToMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.STRING_ON_LONG);
+                staticMapDeadlineToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalDeadLineData, TypeMap.LONG_ON_STRING);
+                staticMapMakeTimeToOrder = (Map<Long, String>) LogicHelper.createMapOrderAndTime(finalMakeOrderData, TypeMap.LONG_ON_STRING);
+                size = makeOrderTimes.size() - 1;
+                flag = false;
+            }
+            fullAlgorithmJob(countedBasePi, new Long(staticSumOfMakeOrderTimes));
+        } catch (NullPointerException ex) {
+            return;
         }
-        fullAlgorithmJob(countedBasePi, new Long(staticSumOfMakeOrderTimes));
 
     }
 
     /**
      * Pełna logika wykonania algorytmu
-     * @param countedBasePi obliczone p(i) bazowe
+     *
+     * @param countedBasePi          obliczone p(i) bazowe
      * @param sumOfTheMakeOrderTimes suma czasów obróbek
      */
     private void fullAlgorithmJob(List<Long> countedBasePi, Long sumOfTheMakeOrderTimes) {
         if (countedBasePi.size() != 0) {
             SimpleProcedure sp = new SimpleProcedure();
             for (int i = 0; i < countedBasePi.size(); i++) {
-                System.out.println(i);
                 if (i == 0) {
                     long smallestValue = sp.findSmallestValue(countedBasePi);
                     solveSolution(countedBasePi, smallestValue, 0, new ArrayList<>(staticListMakeOrderTimes), new ArrayList<>(staticListDeadlineTimes), sumOfTheMakeOrderTimes, new ArrayList<>(staticOrderNames), currentDelay);
                     staticLastUsedBasedPiRoads.add(smallestValue);
-                    System.out.println("Bazowe opóźnienie: " + baseDelay);
                 } else {
                     long smallestValue = sp.findSmallestValueOfPi(countedBasePi, staticLastUsedBasedPiRoads, baseDelay);
                     if (sp.isHavingSmallerValueThanCurrentDelay(staticLastUsedBasedPiRoads, baseDelay, countedBasePi)) {
@@ -103,7 +107,7 @@ public class LogicSolution {
             String orderElemToSave = orderOfCurrentQueueHelperObj.get(0);
             finalOrderOfOrders.add(orderElemToSave);
             //Przygotowanie do dalszych obliczeń.
-            if(finalOrderOfOrders.size() - 1 != size) {
+            if (finalOrderOfOrders.size() - 1 != size) {
                 int indexOfReducing = staticOrderNames.indexOf(orderElemToSave);
                 staticSumOfMakeOrderTimes = staticSumOfMakeOrderTimes - staticListMakeOrderTimes.get(indexOfReducing);
                 staticOrderNames.remove(indexOfReducing);
@@ -111,36 +115,35 @@ public class LogicSolution {
                 staticListMakeOrderTimes.remove(indexOfReducing);
                 staticLastUsedBasedPiRoads.clear();
                 solveThePoblem(new ArrayList<>(staticListMakeOrderTimes), new ArrayList<>(staticListDeadlineTimes));
-            }else{
+            } else {
                 order = new ArrayList<>(finalOrderOfOrders);
                 setFinalOrder(sp.generateOrderString(order));
-                finalizeAlgorithm(order,new ArrayList<>(finalMakeOrderData),new ArrayList<>(finalDeadLineData),new Long(finalSumOfMakeOrderData), new ArrayList<>(finalStaticOrderNames));
+                finalizeAlgorithm(order, new ArrayList<>(finalMakeOrderData), new ArrayList<>(finalDeadLineData), new Long(finalSumOfMakeOrderData), new ArrayList<>(finalStaticOrderNames));
             }
-        } else {
-            System.out.println(baseDelay);
         }
     }
 
     /**
      * Finalizacja algorytmu
-     * @param order układ
-     * @param makeOrderData lista czasów obróbek
-     * @param deadLineData lista terminów
+     *
+     * @param order               układ
+     * @param makeOrderData       lista czasów obróbek
+     * @param deadLineData        lista terminów
      * @param sumOfMakeOrderTimes suma czasów obróbek
-     * @param orderNames lista nazw zleceń np [z1,z2,z3]
+     * @param orderNames          lista nazw zleceń np [z1,z2,z3]
      */
     private void finalizeAlgorithm(List<String> order, ArrayList<Long> makeOrderData, ArrayList<Long> deadLineData, Long sumOfMakeOrderTimes, ArrayList<String> orderNames) {
         SimpleProcedure sp = new SimpleProcedure();
         long delay = 0;
-        for(String orderName : order){
+        for (String orderName : order) {
             List<Long> countedPi = sp.countPi(sumOfMakeOrderTimes, deadLineData);
             int index = orderNames.indexOf(orderName);
             Long aLong = countedPi.get(index);
-            if(aLong < 0){
+            if (aLong < 0) {
                 aLong = 0L;
             }
-            delay+=aLong;
-            sumOfMakeOrderTimes-=makeOrderData.get(index);
+            delay += aLong;
+            sumOfMakeOrderTimes -= makeOrderData.get(index);
             makeOrderData.remove(index);
             deadLineData.remove(index);
             orderNames.remove(index);
@@ -151,14 +154,14 @@ public class LogicSolution {
     /**
      * Rozwiązuje aktualny punkt algorytmu
      *
-     * @param countedBasePi bazowe p(i)
-     * @param basePiElem element listy p(i)
-     * @param baseDelay opóźnienie
-     * @param makeOrderTimes lista czasów obróbek
-     * @param deadlineTimes lista terminów
+     * @param countedBasePi          bazowe p(i)
+     * @param basePiElem             element listy p(i)
+     * @param baseDelay              opóźnienie
+     * @param makeOrderTimes         lista czasów obróbek
+     * @param deadlineTimes          lista terminów
      * @param sumOfTheMakeOrderTimes suma czasów obróbek
-     * @param ordersList lista zleceń
-     * @param currentDelay akutalne opóźnienie
+     * @param ordersList             lista zleceń
+     * @param currentDelay           akutalne opóźnienie
      */
     private void solveSolution(List<Long> countedBasePi,
                                Long basePiElem,

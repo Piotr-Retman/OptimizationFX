@@ -34,7 +34,7 @@ public class Validator {
             hasData = false;
         }
         String lines = "";
-        if (hasData) {
+        if (hasData && textOfPath.contains(":")) {
             lines = validateFileDataAndRunMultipleCounts(textOfPath);
         }
         return lines;
@@ -89,7 +89,7 @@ public class Validator {
      * @param msg informacja
      * @param alertType typ błędu np ERROR, INFO itp
      */
-    private void generateAlert(String msg, Alert.AlertType alertType) {
+    public void generateAlert(String msg, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType, msg, ButtonType.OK);
         alert.showAndWait();
     }

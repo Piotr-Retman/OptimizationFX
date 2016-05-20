@@ -12,23 +12,25 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import pl.zut.chart.GanttJavaFX;
 import pl.zut.logic.optimization.DifferentMethodologies;
+import pl.zut.logic.optimization.LogicSolution;
 import pl.zut.logic.optimization.TypeMap;
 import pl.zut.logic.optimization.helpers.LogicHelper;
-import pl.zut.logic.optimization.LogicSolution;
 import pl.zut.logic.optimization.helpers.StringWorker;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class MyController {
     private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(MyController.class.getName());
@@ -38,6 +40,12 @@ public class MyController {
     Map<String, Long> mapDeadLineTimeOrder;
 
     Stage primaryStage;
+
+    @FXML
+    private TextField pathToFileToCreateCollectionOfExamples = new TextField();
+
+    @FXML
+    private TextField pathToSavedFile = new TextField();
 
     @FXML
     private TableView<TableObject> tableData = new TableView<TableObject>();
@@ -117,6 +125,56 @@ public class MyController {
 
     @FXML
     private TextField moDelay = new TextField();
+    Validator validator = new Validator();
+
+    @FXML
+    private void handleAddToSolutionPackageBtn(ActionEvent event) {
+        String makeTimeArrayText = makeTimeArray.getText();
+        String deadLineTimes = timeOfOrderArray.getText();
+        String path = pathToFileToCreateCollectionOfExamples.getText();
+        if (path.isEmpty()) {
+            FileChooser fileChooser = new FileChooser();
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+            fileChooser.getExtensionFilters().add(extFilter);
+            File file = fileChooser.showOpenDialog(primaryStage);
+            String absolutePath = "";
+            try {
+                absolutePath = file.getAbsolutePath();
+                path = absolutePath;
+                loadFileAndAddNewExample(path, makeTimeArrayText, deadLineTimes);
+            } catch (NullPointerException ex) {
+                absolutePath = "Nie została wybrana ścieżka";
+            }
+            pathToFileToCreateCollectionOfExamples.setText(absolutePath);
+        } else {
+            loadFileAndAddNewExample(path, makeTimeArrayText, deadLineTimes);
+        }
+    }
+
+    private void loadFileAndAddNewExample(String path, String makeTimeArrayText, String deadLineTimes) {
+        File file = new File(path);
+        try {
+            Stream<String> lines = Files.lines(Paths.get(path));
+            String[] fullDataFromFile = {""};
+            int num[] = {1};
+                lines.forEach(s -> {
+                    if (!(s.startsWith("b") || s.startsWith("a"))) {
+                        System.out.println(s);
+                        num[0]++;
+                    }
+                    fullDataFromFile[0] = StringWorker.generateRetrieveString(fullDataFromFile[0], s, "\n");
+                });
+
+            FileWriter fw = new FileWriter(file);
+            String dataToSave = StringWorker.generateRetrieveString(fullDataFromFile[0], String.valueOf(num[0]), "\n", "a:", makeTimeArrayText, "\n", "b:", deadLineTimes, "\n");
+
+            fw.append(dataToSave);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Obsługa przycisku ładowania danych
@@ -125,11 +183,21 @@ public class MyController {
      */
     @FXML
     private void handleLoadData() throws IOException {
+        resetWhenMultiple();
+
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showOpenDialog(primaryStage);
-        pathToFile.setText(file.getAbsolutePath());
+        String absolutePath = "";
+        try {
+            absolutePath = file.getAbsolutePath();
+        } catch (NullPointerException ex) {
+            absolutePath = "Nie została wybrana ścieżka";
+        }
+        pathToFile.setText(absolutePath);
+        String lines = validator.validateMultipleCountsAndReturnFileAsString(pathToFile.getText());
+        finalDataAfterLoad.setText(lines);
     }
 
 
@@ -142,9 +210,9 @@ public class MyController {
     @FXML
     private void handleSubmitButtonAction(ActionEvent event) throws IOException {
         LOGGER.setLevel(Level.ALL);
-        LOGGER.info("Rozpoczynam procedurę obliczeń...");
-        Validator validator = new Validator();
-        if (singleCountsCheckBox.isSelected()) {
+//        LOGGER.info("Rozpoczynam procedurę obliczeń...");
+        if (!makeTimeArray.getText().isEmpty() && !timeOfOrderArray.getText().isEmpty()) {
+            resetWhenSingle();
             LogicSolution ls = new LogicSolution();
             List<Long> timeOfOrderArrayAsList = StringWorker.prepareListBasedOnString(timeOfOrderArray.getText());
             List<Long> makeTimeArrayAsList = StringWorker.prepareListBasedOnString(makeTimeArray.getText());
@@ -157,11 +225,38 @@ public class MyController {
                 runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
                 runDifferentSolutions(ls);
             }
-        } else if (multipleCountsCheckBox.isSelected()) {
-            String lines = validator.validateMultipleCountsAndReturnFileAsString(pathToFile.getText());
-            finalDataAfterLoad.setText(lines);
+        } else if (makeTimeArray.getText().isEmpty() && timeOfOrderArray.getText().isEmpty()) {
+
             runMultipleAlgorithmSolutions(validator.getMapCountNumAndPairTimes());
+        } else {
+            validator.generateAlert("Jeśli chcesz pracować w trybie pracy z plikiem wczytaj dane!", Alert.AlertType.ERROR);
         }
+    }
+
+    private void resetWhenSingle() {
+        ganttChart.setDisable(false);
+        finalDataAfterLoad.setText("");
+        pathToFile.setText("");
+        finalDataToSave.setText("");
+        pathToSavedFile.setText("");
+    }
+
+    private void resetWhenMultiple() {
+        makeTimeArray.setText("");
+        timeOfOrderArray.setText("");
+        supply.setText("");
+        mtOrder.setText("");
+        mtDelay.setText("");
+        moDelay.setText("");
+        moOrder.setText("");
+        mzaOrder.setText("");
+        mzaDelay.setText("");
+        solutionAfterOptimization.setText("");
+        solutionAfterOptimizationDelay.setText("");
+        sumOfMakeTimes.setText("");
+        tableData.getItems().clear();
+        ganttChart.setDisable(true);
+
     }
 
     @FXML
@@ -188,7 +283,7 @@ public class MyController {
 
             Stage stage = new Stage();
 
-            String[] machines = new String[]{"M1", "Terminy"};
+            String[] machines = new String[]{"M1"};
 
             final NumberAxis xAxis = new NumberAxis();
             final CategoryAxis yAxis = new CategoryAxis();
@@ -214,11 +309,7 @@ public class MyController {
             XYChart.Series series = new XYChart.Series();
             fillDataSeries(series, machine, TypeMap.WITH_MAKE_ORDER_TIMES);
 
-            machine = machines[1];
-            XYChart.Series seriesDeadlines = new XYChart.Series();
-            fillDataSeries(seriesDeadlines, machine, TypeMap.WITH_DEADLINE_TIMES);
-
-            chart.getData().addAll(series, seriesDeadlines);
+            chart.getData().addAll(series);
 
             chart.getStylesheets().add(getClass().getResource("/css/ganttchart.css").toExternalForm());
 
@@ -252,7 +343,7 @@ public class MyController {
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
             machineOneSeries.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
-            LOGGER.info("Dane do diagramu Gantta: " + StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
+//            LOGGER.info("Dane do diagramu Gantta: " + StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
             startPoint = endPoint;
         }
     }
@@ -329,6 +420,7 @@ public class MyController {
         File file = fileChooser.showSaveDialog(primaryStage);
 
         if (file != null) {
+            pathToSavedFile.setText(file.getAbsolutePath());
             createFileAndSave(listOfSolutions, file);
         }
     }
@@ -348,17 +440,17 @@ public class MyController {
                         so.getMakeTimes(), " \n ",
                         "b:",
                         so.getDeadLineTimes(), " \n ",
-                        "Mopt", "\n",
-                        so.getmOptOrder(), "\n",
+                        "Mopt", " -",
+                        so.getmOptOrder(), " - ",
                         String.valueOf(so.getmOptDelay()), "\n",
-                        "MO", "\n",
-                        so.getmOOrder(), "\n",
+                        "MO", " -",
+                        so.getmOOrder(), " - ",
                         String.valueOf(so.getmODelay()), "\n",
-                        "MT", "\n",
-                        so.getMtOrder(), "\n",
+                        "MT", " -",
+                        so.getMtOrder(), " - ",
                         String.valueOf(so.getMtDelay()), "\n",
-                        "MZa", "\n",
-                        so.getmZaOrder(), "\n",
+                        "MZa", " -",
+                        so.getmZaOrder(), " - ",
                         String.valueOf(so.getmZaDelay()),
                         "\n ======= \n");
                 contentToShowUser = contentToShowUser + content;
@@ -451,32 +543,34 @@ public class MyController {
 
     @FXML
     private void handleTestButtonSetTestData(ActionEvent event) {
-        makeTimeArray.setText("10,20,100,50,100");
-        timeOfOrderArray.setText("150,30,110,60,10");
+//        makeTimeArray.setText("10,20,100,50,100");
+        makeTimeArray.setText("10,20,100,50,100,23,50,55,77,222,444");
+//        timeOfOrderArray.setText("150,30,110,60,10");
+        timeOfOrderArray.setText("150,30,110,60,120,100,150,40,100,333,111");
 
     }
 
-    @FXML
-    private void handleSingleCountsCheckBox(ActionEvent event) {
-        if (singleCountsCheckBox.isSelected()) {
-            multipleCountsCheckBox.setSelected(false);
-            singleCountsCheckBox.setSelected(true);
-            makeTimeArray.setDisable(false);
-            timeOfOrderArray.setDisable(false);
-            testButtonSetData.setDisable(false);
-            loadData.setDisable(true);
-        }
-    }
-
-    @FXML
-    private void handleMultipleCountsCheckBox(ActionEvent event) {
-        if (multipleCountsCheckBox.isSelected()) {
-            singleCountsCheckBox.setSelected(false);
-            multipleCountsCheckBox.setSelected(true);
-            makeTimeArray.setDisable(true);
-            timeOfOrderArray.setDisable(true);
-            testButtonSetData.setDisable(true);
-            loadData.setDisable(false);
-        }
-    }
+//    @FXML
+//    private void handleSingleCountsCheckBox(ActionEvent event) {
+//        if (singleCountsCheckBox.isSelected()) {
+//            multipleCountsCheckBox.setSelected(false);
+//            singleCountsCheckBox.setSelected(true);
+//            makeTimeArray.setDisable(false);
+//            timeOfOrderArray.setDisable(false);
+//            testButtonSetData.setDisable(false);
+//            loadData.setDisable(true);
+//        }
+//    }
+//
+//    @FXML
+//    private void handleMultipleCountsCheckBox(ActionEvent event) {
+//        if (multipleCountsCheckBox.isSelected()) {
+//            singleCountsCheckBox.setSelected(false);
+//            multipleCountsCheckBox.setSelected(true);
+//            makeTimeArray.setDisable(true);
+//            timeOfOrderArray.setDisable(true);
+//            testButtonSetData.setDisable(true);
+//            loadData.setDisable(false);
+//        }
+//    }
 }

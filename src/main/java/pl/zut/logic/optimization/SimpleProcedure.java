@@ -3,6 +3,7 @@ package pl.zut.logic.optimization;
 import pl.zut.logic.optimization.helpers.SimpleProcedureHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -32,13 +33,17 @@ class SimpleProcedure extends SimpleProcedureHelper {
      * @return suma czasów obróbek T0
      */
     long countSumOfMakeOrderTimes(List<Long> makeOrderTimes) {
-        final long sumOfMakeOrderTimes[] = {0L};
+        try {
+            final long sumOfMakeOrderTimes[] = {0L};
 
-        makeOrderTimes.stream().forEach(makeOrderTime ->
-                sumOfMakeOrderTimes[0] = sumOfMakeOrderTimes[0] + makeOrderTime
+            makeOrderTimes.stream().forEach(makeOrderTime ->
+                    sumOfMakeOrderTimes[0] = sumOfMakeOrderTimes[0] + makeOrderTime
 
-        );
-        return sumOfMakeOrderTimes[0];
+            );
+            return sumOfMakeOrderTimes[0];
+        }catch(NullPointerException ex){
+            return 0;
+        }
     }
 
     /**

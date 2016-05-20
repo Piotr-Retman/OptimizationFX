@@ -23,40 +23,43 @@
             <DropShadow />
          </effect>
       </Button>
-      <Button id="showChartButton" fx:id="ganttChart" layoutX="269.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleGanttBtnAction" prefHeight="25.0" prefWidth="109.0" text="RYSUJ WYKRES" />
-      <CheckBox id="singleCountChoose" fx:id="singleCountsCheckBox" layoutX="326.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleSingleCountsCheckBox" prefHeight="17.0" prefWidth="167.0" selected="true" text="TRYB POJEDYNCZY" />
+      <Button id="showChartButton" fx:id="ganttChart" disable="true" layoutX="269.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleGanttBtnAction" prefHeight="25.0" prefWidth="109.0" text="RYSUJ WYKRES" />
       <Button id="test" fx:id="testButtonSetData" defaultButton="true" layoutX="12.0" layoutY="36.0" lineSpacing="5.0" mnemonicParsing="false" onAction="#handleTestButtonSetTestData" prefHeight="25.0" prefWidth="121.0" text="TEST" />
-      <Label layoutX="12.0" layoutY="391.0" prefHeight="17.0" prefWidth="141.0" text="Ścieżka do pliku" />
-      <TextField id="pathToFile" fx:id="pathToFile" disable="true" layoutX="12.0" layoutY="362.0" prefHeight="25.0" prefWidth="475.0" />
-      <Button id="loadData" fx:id="loadData" disable="true" layoutX="148.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleLoadData" prefHeight="25.0" prefWidth="109.0" text="WCZYTAJ DANE" />
-      <CheckBox id="multipleCountsChoose" fx:id="multipleCountsCheckBox" layoutX="15.0" layoutY="678.0" mnemonicParsing="false" onAction="#handleMultipleCountsCheckBox" prefHeight="17.0" prefWidth="183.0" text="TRYB WIELU OBLICZEŃ" />
+      <Label layoutX="13.0" layoutY="448.0" prefHeight="17.0" prefWidth="141.0" text="Ścieżka do pliku z danymi" />
+      <TextField id="pathToFile" fx:id="pathToFile" editable="false" layoutX="13.0" layoutY="419.0" prefHeight="25.0" prefWidth="475.0" />
+      <Button id="loadData" fx:id="loadData" layoutX="148.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleLoadData" prefHeight="25.0" prefWidth="109.0" text="WCZYTAJ DANE" />
       <Label layoutX="12.0" layoutY="200.0" prefHeight="17.0" prefWidth="121.0" text="Czas obróbek T0[]" />
-      <TextField id="sumOfMakeTimes" fx:id="sumOfMakeTimes" disable="true" layoutX="178.0" layoutY="453.0" prefHeight="29.0" prefWidth="322.0" />
-      <Label layoutX="17.0" layoutY="459.0" text="Suma czasów obróbek So" />
-      <TextField id="solutionFirst" fx:id="mtOrder" editable="false" layoutX="178.0" layoutY="500.0" />
-      <TextField id="solutionAfterOptimization" fx:id="solutionAfterOptimization" editable="false" layoutX="178.0" layoutY="538.0" />
-      <Label layoutX="17.0" layoutY="504.0" text="Rozwiązanie bazowe MT" />
-      <Label layoutX="17.0" layoutY="544.0" text="Rozwiązanie optymalne Mopt" />
-      <TextField id="solutionFirstDelay" fx:id="mtDelay" disable="true" layoutX="346.0" layoutY="500.0" prefHeight="25.0" prefWidth="155.0" />
-      <TextField id="solutionAfterOptimizationDelay" fx:id="solutionAfterOptimizationDelay" disable="true" layoutX="346.0" layoutY="538.0" prefHeight="25.0" prefWidth="155.0" />
-      <Separator layoutX="8.0" layoutY="422.0" prefHeight="3.0" prefWidth="497.0" />
-      <Separator layoutX="9.0" layoutY="660.0" prefHeight="10.0" prefWidth="497.0" />
-      <TextField fx:id="supply" disable="true" editable="false" layoutX="13.0" layoutY="290.0" prefHeight="25.0" prefWidth="475.0" />
+      <TextField id="sumOfMakeTimes" fx:id="sumOfMakeTimes" layoutX="189.0" layoutY="529.0" prefHeight="29.0" prefWidth="322.0" />
+      <Label layoutX="28.0" layoutY="535.0" text="Suma czasów obróbek So" />
+      <TextField id="solutionFirst" fx:id="mtOrder" editable="false" layoutX="190.0" layoutY="565.0" />
+      <TextField id="solutionAfterOptimization" fx:id="solutionAfterOptimization" editable="false" layoutX="190.0" layoutY="603.0" />
+      <Label layoutX="29.0" layoutY="569.0" text="Rozwiązanie bazowe MT" />
+      <Label layoutX="29.0" layoutY="609.0" text="Rozwiązanie optymalne Mopt" />
+      <TextField id="solutionFirstDelay" fx:id="mtDelay" layoutX="358.0" layoutY="565.0" prefHeight="25.0" prefWidth="155.0" />
+      <TextField id="solutionAfterOptimizationDelay" fx:id="solutionAfterOptimizationDelay" layoutX="358.0" layoutY="603.0" prefHeight="25.0" prefWidth="155.0" />
+      <Separator layoutX="21.0" layoutY="519.0" prefHeight="3.0" prefWidth="497.0" />
+      <Separator layoutX="21.0" layoutY="719.0" prefHeight="10.0" prefWidth="497.0" />
+      <TextField fx:id="supply" editable="false" layoutX="13.0" layoutY="290.0" prefHeight="25.0" prefWidth="475.0" />
       <Label layoutX="14.0" layoutY="323.0" prefHeight="17.0" prefWidth="121.0" text="Zapas" />
       <Separator layoutX="4.0" layoutY="350.0" prefHeight="3.0" prefWidth="497.0" />
       <Button fx:id="help" layoutX="391.0" layoutY="36.0" mnemonicParsing="false" onAction="#handleHelpWindow" prefHeight="25.0" prefWidth="109.0" text="POMOC" />
       <Separator layoutX="8.0" layoutY="142.0" prefHeight="3.0" prefWidth="497.0" />
       <TableView fx:id="tableData" layoutX="513.0" layoutY="31.0" prefHeight="364.0" prefWidth="834.0" />
-      <TextField fx:id="mzaOrder" editable="false" layoutX="178.0" layoutY="578.0" />
-      <TextField fx:id="mzaDelay" disable="true" layoutX="346.0" layoutY="578.0" prefHeight="25.0" prefWidth="155.0" />
-      <TextField fx:id="moDelay" disable="true" layoutX="346.0" layoutY="618.0" prefHeight="25.0" prefWidth="155.0" />
-      <TextField fx:id="moOrder" editable="false" layoutX="178.0" layoutY="618.0" />
-      <Label layoutX="17.0" layoutY="582.0" text="Rozwiązanie  Mza" />
-      <Label layoutX="15.0" layoutY="622.0" text="Rozwiązanie Mo" />
+      <TextField fx:id="mzaOrder" editable="false" layoutX="190.0" layoutY="643.0" />
+      <TextField fx:id="mzaDelay" layoutX="358.0" layoutY="643.0" prefHeight="25.0" prefWidth="155.0" />
+      <TextField fx:id="moDelay" layoutX="358.0" layoutY="683.0" prefHeight="25.0" prefWidth="155.0" />
+      <TextField fx:id="moOrder" editable="false" layoutX="190.0" layoutY="683.0" />
+      <Label layoutX="29.0" layoutY="647.0" text="Rozwiązanie  Mza" />
+      <Label layoutX="27.0" layoutY="687.0" text="Rozwiązanie Mo" />
       <Text layoutX="668.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DANE DO OBLICZEŃ" />
       <Text layoutX="1064.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DANE PO OBLICZENIACH I ZAPISIE" />
-      <TextArea fx:id="finalDataAfterLoad" editable="false" layoutX="521.0" layoutY="431.0" opacity="0.8" prefHeight="335.0" prefWidth="414.0" />
-      <TextArea fx:id="finalDataToSave" editable="false" layoutX="943.0" layoutY="431.0" opacity="0.8" prefHeight="335.0" prefWidth="404.0" />
+      <TextArea fx:id="finalDataAfterLoad" editable="false" layoutX="521.0" layoutY="431.0" opacity="0.8" prefHeight="310.0" prefWidth="414.0" />
+      <TextArea fx:id="finalDataToSave" editable="false" layoutX="943.0" layoutY="431.0" opacity="0.8" prefHeight="310.0" prefWidth="404.0" />
+      <TextField id="pathToFile" fx:id="pathToSavedFile" editable="false" layoutX="13.0" layoutY="470.0" prefHeight="25.0" prefWidth="475.0" />
+      <Label layoutX="13.0" layoutY="502.0" prefHeight="17.0" prefWidth="169.0" text="Ścieżka do pliku po zapisie" />
+      <TextField id="pathToFile" fx:id="pathToFileToCreateCollectionOfExamples" editable="false" layoutX="13.0" layoutY="363.0" prefHeight="25.0" prefWidth="437.0" />
+      <Label layoutX="13.0" layoutY="395.0" prefHeight="17.0" prefWidth="204.0" text="Plik zapisu przykładów" />
+      <Button fx:id="addToSolutionPackageBtn" layoutX="450.0" layoutY="363.0" mnemonicParsing="false" onAction="#handleAddToSolutionPackageBtn" prefHeight="25.0" prefWidth="57.0" text="Dodaj" />
    </children>
    <effect>
       <Blend />
