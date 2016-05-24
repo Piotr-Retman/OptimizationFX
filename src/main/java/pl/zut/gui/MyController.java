@@ -223,7 +223,8 @@ public class MyController {
 
             if (isOk) {
                 runAlgorithm(ls, makeTimeArrayAsList, timeOfOrderArrayAsList);
-                runDifferentSolutions(ls);
+                runDifferentSolutions();
+
             }
         } else if (makeTimeArray.getText().isEmpty() && timeOfOrderArray.getText().isEmpty()) {
 
@@ -343,7 +344,6 @@ public class MyController {
             endPoint = startPoint + aLong;
             String status = checkStatus(i);
             machineOneSeries.getData().add(new XYChart.Data(startPoint, machine, new GanttJavaFX.ExtraData(aLong, status)));
-//            LOGGER.info("Dane do diagramu Gantta: " + StringWorker.generateRetrieveString(startPoint + " - " + endPoint + "-" + aLong));
             startPoint = endPoint;
         }
     }
@@ -384,9 +384,9 @@ public class MyController {
             List<Long> currentDeadlineTimesAsList = StringWorker.prepareListBasedOnString(currentDeadlineTimes);
             logicSolution.solveThePoblem(currentMakeTimesAsList, currentDeadlineTimesAsList);
 
-            df.countIncreasingDeadLineTimesOrder(logicSolution);
-            df.countIncreasingMakeTimesOrder(logicSolution);
-            df.countSupplyIncreaseOrder(logicSolution);
+            df.countIncreasingDeadLineTimesOrder();
+            df.countIncreasingMakeTimesOrder();
+            df.countSupplyIncreaseOrder();
 
             so.setMakeTimes(currentMakeTimes);
             so.setDeadLineTimes(currentDeadlineTimes);
@@ -466,17 +466,17 @@ public class MyController {
 
     }
 
-    private void runDifferentSolutions(LogicSolution ls) {
+    private void runDifferentSolutions() {
         DifferentMethodologies differentMethodologies = new DifferentMethodologies();
-        differentMethodologies.countSupplyIncreaseOrder(ls);
+        differentMethodologies.countSupplyIncreaseOrder();
         mzaOrder.setText(differentMethodologies.getSupplyIncreaseOrder());
         mzaDelay.setText(String.valueOf(differentMethodologies.getSupplyIncreaseTimeDelay()));
 
-        differentMethodologies.countIncreasingMakeTimesOrder(ls);
+        differentMethodologies.countIncreasingMakeTimesOrder();
         moOrder.setText(differentMethodologies.getIncreaseMakeTimeOrder());
         moDelay.setText(String.valueOf(differentMethodologies.getIncreateMakeTimeDelay()));
 
-        differentMethodologies.countIncreasingDeadLineTimesOrder(ls);
+        differentMethodologies.countIncreasingDeadLineTimesOrder();
         mtOrder.setText(differentMethodologies.getIncreaseDeadLineTimeOrder());
         mtDelay.setText(String.valueOf(differentMethodologies.getIncreaseDeadLineTimeDelay()));
     }
@@ -487,10 +487,14 @@ public class MyController {
         mapDeadLineTimeOrder = (Map<String, Long>) LogicHelper.createMapOrderAndTime(timeOfOrderArrayAsList, TypeMap.STRING_ON_LONG);
         updateSupplyData(makeTimeArrayAsList, timeOfOrderArrayAsList);
         ls.clearStatics();
-        ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList);
-        order = ls.getOrder();
-        updateVisualData(ls);
-        updateTable(ls);
+        try {
+            ls.solveThePoblem(makeTimeArrayAsList, timeOfOrderArrayAsList);
+            order = ls.getOrder();
+            updateVisualData(ls);
+            updateTable(ls);
+        }catch(Exception ex){
+            return;
+        }
     }
 
     private void updateSupplyData(List<Long> listMakeTimeOrder, List<Long> listTimeDeadlineOrder) {
@@ -504,8 +508,8 @@ public class MyController {
         tableData.getItems().clear();
         tableData.getColumns().clear();
         List<String> order = ls.getOrder();
-        Map<String, Long> mapDeadlineToOrder = LogicSolution.getStaticMapOrderToDeadline();
-        Map<String, Long> mapMakeTimeToOrder = LogicSolution.getStaticMapOrderToMakeTime();
+        Map<String, Long> mapDeadlineToOrder = LogicSolution.getMapOrderToDeadline();
+        Map<String, Long> mapMakeTimeToOrder = LogicSolution.getMapOrderToMakeTime();
         List<TableObject> tableObjects = generateTableObjectsList(order, mapMakeTimeToOrder, mapDeadlineToOrder);
 
         ObservableList<TableObject> data = FXCollections.observableArrayList(tableObjects);
@@ -535,7 +539,7 @@ public class MyController {
     }
 
     private void updateVisualData(LogicSolution ls) {
-        sumOfMakeTimes.setText(String.valueOf(LogicSolution.getFinalSumOfMakeOrderData()));
+        sumOfMakeTimes.setText(String.valueOf(ls.getSumOfMakeTimes()));
         solutionAfterOptimizationDelay.setText(String.valueOf(ls.getFinalDelay()));
         solutionAfterOptimization.setText(ls.getFinalOrder());
     }
@@ -543,34 +547,10 @@ public class MyController {
 
     @FXML
     private void handleTestButtonSetTestData(ActionEvent event) {
-//        makeTimeArray.setText("10,20,100,50,100");
-        makeTimeArray.setText("10,20,100,50,100,23,50,55,77,222,444");
-//        timeOfOrderArray.setText("150,30,110,60,10");
-        timeOfOrderArray.setText("150,30,110,60,120,100,150,40,100,333,111");
+        makeTimeArray.setText("10,100,40,50,70");
+//        makeTimeArray.setText("10,20,100,50,100,23,50,55,77,222,444");
+        timeOfOrderArray.setText("50,20,11,40,60");
+//        timeOfOrderArray.setText("150,30,110,60,120,100,150,40,100,333,111");
 
     }
-
-//    @FXML
-//    private void handleSingleCountsCheckBox(ActionEvent event) {
-//        if (singleCountsCheckBox.isSelected()) {
-//            multipleCountsCheckBox.setSelected(false);
-//            singleCountsCheckBox.setSelected(true);
-//            makeTimeArray.setDisable(false);
-//            timeOfOrderArray.setDisable(false);
-//            testButtonSetData.setDisable(false);
-//            loadData.setDisable(true);
-//        }
-//    }
-//
-//    @FXML
-//    private void handleMultipleCountsCheckBox(ActionEvent event) {
-//        if (multipleCountsCheckBox.isSelected()) {
-//            singleCountsCheckBox.setSelected(false);
-//            multipleCountsCheckBox.setSelected(true);
-//            makeTimeArray.setDisable(true);
-//            timeOfOrderArray.setDisable(true);
-//            testButtonSetData.setDisable(true);
-//            loadData.setDisable(false);
-//        }
-//    }
 }

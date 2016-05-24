@@ -28,13 +28,12 @@ public class DifferentMethodologies extends LogicSolution {
 
     /**
      * Oblicza metodę MT
-     * @param ls obiekt klasy LogicSolution
      */
-    public void countIncreasingDeadLineTimesOrder(LogicSolution ls) {
+    public void countIncreasingDeadLineTimesOrder() {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MT...");
-        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
-        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
+        List<Long> makeOrderTimes = new ArrayList(LogicSolution.getFinalMakeTimeOrderData());
+        List<Long> deadlineOrderTimes = new ArrayList(LogicSolution.getFinalDeadlineOrderTimesData());
         Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(deadlineOrderTimes);
@@ -49,11 +48,11 @@ public class DifferentMethodologies extends LogicSolution {
      * Oblicza metodę MO
      * @param ls obiekt klasy LogicSolution
      */
-    public void countIncreasingMakeTimesOrder(LogicSolution ls) {
+    public void countIncreasingMakeTimesOrder() {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą M0...");
-        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
-        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
+        List<Long> makeOrderTimes = new ArrayList(LogicSolution.getFinalMakeTimeOrderData());
+        List<Long> deadlineOrderTimes = new ArrayList(LogicSolution.getFinalDeadlineOrderTimesData());
         Map<String, Long> mapOrderAndTimeMakeTime = (Map<String, Long>) LogicHelper.createMapOrderAndTime(makeOrderTimes,TypeMap.STRING_ON_LONG);
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);
         Collections.sort(makeOrderTimes);
@@ -69,11 +68,11 @@ public class DifferentMethodologies extends LogicSolution {
      * Oblicza metodę MZa
      * @param ls obiekt klasy LogicSolution
      */
-    public void countSupplyIncreaseOrder(LogicSolution ls) {
+    public void countSupplyIncreaseOrder() {
         LOGGER.setLevel(Level.ALL);
         LOGGER.info("Rozpoczynam obliczanie metodą MZa...");
-        List<Long> makeOrderTimes = new ArrayList(ls.finalMakeOrderData);
-        List<Long> deadlineOrderTimes = new ArrayList(ls.finalDeadLineData);
+        List<Long> makeOrderTimes = new ArrayList(LogicSolution.getFinalMakeTimeOrderData());
+        List<Long> deadlineOrderTimes = new ArrayList(LogicSolution.getFinalDeadlineOrderTimesData());
         List<Long> supplyLongs = LogicHelper.createSupplyLongs(makeOrderTimes, deadlineOrderTimes);
         Map<String, Long> mapOrderAndTimeSupplies = (Map<String, Long>) LogicHelper.createMapOrderAndTime(supplyLongs,TypeMap.STRING_ON_LONG);
         Map<String, Long> mapOrderAndTimeDeadLine = (Map<String, Long>) LogicHelper.createMapOrderAndTime(deadlineOrderTimes,TypeMap.STRING_ON_LONG);

@@ -12,52 +12,20 @@ import java.util.stream.IntStream;
  */
 class SimpleProcedure extends SimpleProcedureHelper {
 
-    /**
-     * Oblicza listę p(i)
-     * @param sumOfTheMakeTime - suma czasów obróbek T0
-     * @param deadlineTimes - lista czasów terminów Tt
-     * @return lista p(i)
-     */
-    List<Long> countPi(Long sumOfTheMakeTime, List<Long> deadlineTimes) {
-        List countedPi = new ArrayList<>();
-        deadlineTimes.stream().forEach(deadLineTime -> {
-            long piElement = sumOfTheMakeTime - deadLineTime;
-            countedPi.add(piElement);
+    public List<Long> countPi(Long sumOfMakeOrderTimes, List<Long> deadLineData) {
+        List<Long> pi = new ArrayList<>();
+        deadLineData.stream().forEach(deadLineTime -> {
+            long piVal = sumOfMakeOrderTimes - deadLineTime;
+            pi.add(piVal);
         });
-        return countedPi;
+        return pi;
     }
 
-    /**
-     * Metoda oblicza sumę czasów obróbek T0
-     * @param makeOrderTimes - lista czasów obróbek T0
-     * @return suma czasów obróbek T0
-     */
-    long countSumOfMakeOrderTimes(List<Long> makeOrderTimes) {
-        try {
-            final long sumOfMakeOrderTimes[] = {0L};
-
-            makeOrderTimes.stream().forEach(makeOrderTime ->
-                    sumOfMakeOrderTimes[0] = sumOfMakeOrderTimes[0] + makeOrderTime
-
-            );
-            return sumOfMakeOrderTimes[0];
-        }catch(NullPointerException ex){
-            return 0;
-        }
-    }
-
-    /**
-     * Tworzenie listy nazw zleceń
-     * @param numberOfOrders liczba zleceń
-     * @return
-     */
-    public List<String> createStaticOrderNames(int numberOfOrders) {
-        List<String> orders = new ArrayList<>();
-        IntStream.range(0,numberOfOrders).forEach(value -> {
-            value++;
-            orders.add("z"+value);
-            value--;
+    public long countSumOfMakeOrderTimes(List<Long> makeTimeArrayAsList) {
+        long[] sum = {0L};
+        makeTimeArrayAsList.stream().forEach(orderMakeTimeValue -> {
+            sum[0] += orderMakeTimeValue;
         });
-        return orders;
+        return sum[0];
     }
 }
